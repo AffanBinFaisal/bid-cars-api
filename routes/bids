@@ -1,0 +1,64 @@
+const express = require("express");
+const router = express.Router();
+const authenticateToken = require("../middlewares/authenticate");
+const Bid = require("../models/Bid");
+
+// GET current bids
+router.get("/current", authenticateToken, async (req, res) => {
+  try {
+    const { username } = req.user;
+    const currentBids = await Bid.find({ username: username, active: 1 });
+    res.status(200).json({ currentBids });
+  } catch (error) {
+    console.error("Error fetching current bids:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// GET won bids
+router.get("/won", authenticateToken, async (req, res) => {
+  try {
+    const { username } = req.user;
+    const wonBids = await Bid.find({ username: username, result: 1 });
+    res.status(200).json({ wonBids });
+  } catch (error) {
+    console.error("Error fetching won bids:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// GET lost bids
+router.get("/lost", authenticateToken, async (req, res) => {
+  try {
+    const { username } = req.user;
+    const lostBids = await Bid.find({ username: username, result: 0 });
+    res.status(200).json({ lostBids });
+  } catch (error) {
+    console.error("Error fetching lost bids:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// POST a new bid
+router.post("/", authenticateToken, async (req, res) => {
+  try {
+    const { username } = req.user;
+    const { vehicle, amount, result, active } = req.body;
+    
+    const bid = new Bid({
+      username: username,
+      vehicle: vehicle,
+      amount: amount,
+      result: result,
+      active: active,
+    });
+
+    await bid.save();
+    res.status(200).end();
+  } catch (error) {
+    console.error("Error creating bid:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+module.exports = router;

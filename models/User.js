@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  biddingPower: {
+    type: String,
+  }
 });
 
 userSchema.pre('save', async function (next) {
