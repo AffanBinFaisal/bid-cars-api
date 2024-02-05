@@ -12,7 +12,13 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   biddingPower: {
-    type: String,
+    type: Number,
+  },
+  totalBidsAmount: {
+    type: Number,
+  },
+  bids: {
+    type: Number,
   }
 });
 

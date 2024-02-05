@@ -1,7 +1,36 @@
 const express = require("express");
 const router = express.Router();
+require('dotenv').config();
+
 const authenticateToken = require("../middlewares/authenticate");
 const Bid = require("../models/Bid");
+const User = require("../models/User");
+
+const sendMail = (username, vehicle) => {
+  const transporter = nodemailer.createTransport({
+    host: 'gmail',
+    auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+    }
+  });
+
+  const mailOptions = {
+    from: process.env.USER,
+    to: 'affanfaisal442@gmail.com',
+    subject: 'Request For Bid',
+    text: `${username} has made a bid for ${vehicle}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+    } else {
+      console.log('Email sent:', info.response);
+    }
+  });
+}
+
 
 // GET current bids
 router.get("/current", authenticateToken, async (req, res) => {
@@ -43,17 +72,45 @@ router.get("/lost", authenticateToken, async (req, res) => {
 router.post("/", authenticateToken, async (req, res) => {
   try {
     const { username } = req.user;
-    const { vehicle, amount, result, active } = req.body;
-    
+
+    // Fetch user details
+    const user = await User.findOne({ username: username });
+    const { biddingPower, totalBidsAmount } = user;
+
+    // Extract request body details
+    const { vehicle, amount, merchant } = req.body;
+
+    // Check bidding power based on the merchant
+    if (merchant === "IAAI") {
+      if (biddingPower < 1000) {
+        console.log("Not enough bidding power for IAAI");
+        return res.status(403).json({ error: "Not enough bidding power" });
+      }
+    } else if (merchant === "COPART") {
+      const requiredBiddingPower = totalBidsAmount <= 6000 ? 600 : 0.1 * totalBidsAmount;
+
+      if (!(totalBidsAmount <= 6000 && biddingPower >= 600) ||
+          !(totalBidsAmount > 6000 || biddingPower >= requiredBiddingPower)) {
+        console.log("Not enough bidding power for Copart");
+        return res.status(403).json({ error: "Not enough bidding power" });
+      }
+    }
+
+    // Create a new bid
     const bid = new Bid({
       username: username,
       vehicle: vehicle,
       amount: amount,
-      result: result,
-      active: active,
+      active: 1,
     });
 
+    // Save the bid to the database
     await bid.save();
+
+    // Send email notification
+    sendMail(username, vehicle);
+
+    // Respond with success
     res.status(200).end();
   } catch (error) {
     console.error("Error creating bid:", error);
