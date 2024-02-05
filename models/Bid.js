@@ -8,6 +8,9 @@ const bidSchema = new mongoose.Schema({
   amount: {
     type: Number,
   },
+  requiredBiddingPower: {
+    type: Number,
+  },
   vehicle: {
     type: String,
   },

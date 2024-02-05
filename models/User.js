@@ -11,13 +11,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  deposit: {
+    type: Number,
+  },
   biddingPower: {
     type: Number,
   },
   totalBidsAmount: {
     type: Number,
   },
-  bids: {
+  activeBids: {
     type: Number,
   }
 });

@@ -29,7 +29,22 @@ router.get('/', authenticateToken, async (req, res) => {
 
       await transaction.save();
 
-      const user = await User.findOneAndUpdate({ username: "affan" }, { $set: { biddingPower: 10 } });
+      const user = await User.findOneAndUpdate(
+        { username: "affan" },
+        {
+          $inc: {
+            biddingPower: amount,
+            deposit: amount
+          }
+        },
+        { new: true }
+      );
+
+      if (user) {
+        console.log("User updated successfully:", user);
+      } else {
+        console.log("User not found");
+      }
 
       console.log('Transaction saved to database:', transaction);
 
