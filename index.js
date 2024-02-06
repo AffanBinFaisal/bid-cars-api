@@ -18,6 +18,8 @@ const shippingRouter = require("./routes/shipping");
 const refundRouter = require("./routes/refund");
 const forgotPasswordRouter = require("./routes/forgotPassword");
 const resetPasswordRouter = require("./routes/resetPassword");
+const transactionsRouter = require("./routes/transactions");
+
 
 
 // Middlewares
@@ -27,8 +29,8 @@ app.use(express.json());
 
 
 // Authentication
-app.use("/login", loginRouter);
 app.use("/register", registerRouter);
+app.use("/login", loginRouter);
 app.use("/verify", verificationRouter);
 app.use("/forgot-password", forgotPasswordRouter);
 app.use("/reset-password", resetPasswordRouter);
@@ -37,6 +39,7 @@ app.use("/reset-password", resetPasswordRouter);
 app.use("/cars", carsRouter);
 
 // Payments
+app.use("/transactions", transactionsRouter);
 app.use("/deposit", paymentRouter);
 app.use("/refund", refundRouter);
 app.use("/success", successRouter);

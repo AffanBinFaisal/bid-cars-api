@@ -1,15 +1,12 @@
 const mongoose = require("./db/db");
 
 const transactionSchema = new mongoose.Schema({
-  username: {
+  email: {
     type: String,
     required: true,
   },
   amount: {
     type: Number,
-  },
-  currency: {
-    type: String,
   },
   description: {
     type: String,

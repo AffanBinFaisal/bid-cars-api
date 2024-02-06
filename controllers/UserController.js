@@ -8,17 +8,14 @@ const serverUrl = process.env.SERVER_URL
 
 const loginUser = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const usersList = await User.find({ username: username });
-
-    if (usersList.length > 0) {
-      const user = usersList[0];
-
+    const { email, password } = req.body;
+    const user = await User.findOne({ email: email });
+    if (user) {
       if (await bcrypt.compare(password, user.password)) {
-        const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
+        const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
         res.status(200).json({ token });
       } else {
-        res.status(401).json({ error: "Incorrect username or password" });
+        res.status(401).json({ error: "Incorrect email or password" });
       }
     } else {
       res.status(401).json({ error: "User not found" });
@@ -30,15 +27,15 @@ const loginUser = async (req, res) => {
 }
 
 const registerUser = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   const secretKey = 'your-secret-key';
-  if (username && password) {
-    const existingUsersList = User.find({ username: username });
+  if (email && password) {
+    const existingUsersList = User.find({ email: email });
     if (existingUsersList.length == 0) {
-      const verificationToken = Buffer.from(`${username}:${secretKey}`).toString('base64');
-      const user = User({ username: username, password: password, verificationToken: verificationToken, verified: false });
+      const verificationToken = Buffer.from(`${email}:${secretKey}`).toString('base64');
+      const user = User({ email: email, password: password, verificationToken: verificationToken, verified: false });
       await user.save();
-      const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
+      const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
       sendVerificationMail(recipient, verificationToken);
       res.status(200).json({ token });
     }
@@ -46,7 +43,7 @@ const registerUser = async (req, res) => {
       res.status(409).json({ message: "User already exists" });
     }
   } else {
-    res.status(400).json({ message: "Please fill both username and password" });
+    res.status(400).json({ message: "Please fill both email and password" });
   }
 }
 

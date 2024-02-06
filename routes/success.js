@@ -33,6 +33,8 @@ router.get('/', authenticateToken, async (req, res) => {
 
       await transaction.save();
 
+      console.log('Transaction saved to database:', transaction);
+
       const user = await User.findOneAndUpdate(
         { email: email },
         {
@@ -50,11 +52,17 @@ router.get('/', authenticateToken, async (req, res) => {
         console.log("User not found");
       }
 
-      console.log('Transaction saved to database:', transaction);
+      Session.deleteOne({ email: email }, (err) => {
+        if (err) {
+          console.error('Error deleting document:', err);
+        } else {
+          console.log('Document deleted successfully');
+        }
+      });
 
       res.status(200).json({ message: "Payment successfull" });
     } else {
-      res.status(403).json({ message: "Payment not made" });
+      res.status(403).json({ error: "Payment not made" });
     }
 
   } catch (error) {

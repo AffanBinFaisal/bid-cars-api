@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const secretKey = 'your-secret-key';
 
-const authenticateToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
   const token = req.headers['authorization'];
 
   if (!token) {
@@ -13,7 +13,6 @@ const authenticateToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({ message: 'Forbidden: Invalid token' });
     }
-
     req.user = user;
     next();
   });

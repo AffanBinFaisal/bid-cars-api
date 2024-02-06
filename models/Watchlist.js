@@ -1,7 +1,7 @@
 const mongoose = require("./db/db");
 
 const watchlistSchema = new mongoose.Schema({
-  username: {
+  email: {
     type: String,
     required: true,
   },

@@ -7,8 +7,8 @@ const sendMail = require("./../utils/mails/sendBidMail");
 
 const fetchBids = async (req, res, resultFilter) => {
   try {
-    const { username } = req.user;
-    const bids = await Bid.find({ username: username, result: resultFilter });
+    const { email } = req.user;
+    const bids = await Bid.find({ email: email, result: resultFilter });
     return bids;
   } catch (error) {
     console.error(`Error fetching bids: ${error}`);
@@ -45,10 +45,10 @@ const getLostBids = async (req, res) => {
 
 const createBid = async (req, res) => {
   try {
-    const { username } = req.user;
+    const { email } = req.user;
 
     // Fetch user details
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ email: email });
     const { biddingPower, totalBidsAmount } = user;
 
     // Extract request body details
@@ -75,7 +75,7 @@ const createBid = async (req, res) => {
 
     // Create a new bid
     const bid = new Bid({
-      username: username,
+      email: email,
       vehicle: vehicle,
       amount: amount,
       active: 1,
@@ -86,7 +86,7 @@ const createBid = async (req, res) => {
     await bid.save();
 
     const updatedUser = await User.findOneAndUpdate(
-      { username: username },
+      { email: email },
       {
         $inc: {
           biddingPower: -requiredBiddingPower,
@@ -102,7 +102,7 @@ const createBid = async (req, res) => {
     }
 
     // Send email notification
-    sendMail(username, vehicle);
+    sendMail(email, vehicle);
 
     // Respond with success
     res.status(200).end();
@@ -114,7 +114,7 @@ const createBid = async (req, res) => {
 
 const updateBid = async (req, res) => {
   try {
-    const { username, id, result } = req.body;
+    const { email, id, result } = req.body;
 
     // Validate if 'id' is a valid MongoDB ObjectId
     if (!mongoose.isValidObjectId(id)) {
@@ -138,7 +138,7 @@ const updateBid = async (req, res) => {
 
       // Update user biddingPower
       const updatedUser = await User.findOneAndUpdate(
-        { username: username },
+        { email: email },
         {
           $inc: {
             biddingPower: updatedBid.requiredBiddingPower,

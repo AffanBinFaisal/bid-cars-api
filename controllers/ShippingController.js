@@ -3,8 +3,8 @@ const Shipping = require("./../models/Shipping");
 
 const getActiveShippings = async (req, res) => {
   try {
-    const { username } = req.user;
-    const shippings = await Shipping.find({ username: username, active: 1 });
+    const { email } = req.user;
+    const shippings = await Shipping.find({ email: email, active: 1 });
     res.status(200).json({ shippings });
   } catch (error) {
     console.error("Error fetching shippings:", error);
@@ -14,8 +14,8 @@ const getActiveShippings = async (req, res) => {
 
 const getCompletedShippings = async (req, res) => {
   try {
-    const { username } = req.user;
-    const shippings = await Shipping.find({ username: username, active: 0 });
+    const { email } = req.user;
+    const shippings = await Shipping.find({ email: email, active: 0 });
     res.status(200).json({ shippings });
   } catch (error) {
     console.error("Error fetching shippings:", error);
@@ -24,11 +24,11 @@ const getCompletedShippings = async (req, res) => {
 }
 
 const createShipping = async (req, res) => {
-  const { username } = req.user;
+  const { email } = req.user;
   const { vehicle, status } = req.body;
   try {
     const shipping = new Shipping({
-      username: username,
+      email: email,
       vehicle: vehicle,
       status: status,
       active: 1,

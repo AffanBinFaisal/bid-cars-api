@@ -5,8 +5,8 @@ const Watchlist = require("./../models/Watchlist");
 
 router.get("/", authenticateToken, async (req, res) => {
   try {
-    const { username } = req.user;
-    const watchlist = await Watchlist.find({ username: username });
+    const { email } = req.user;
+    const watchlist = await Watchlist.find({ email: email });
     res.status(200).json({ watchlist });
   } catch (error) {
     console.error("Error fetching watchlist:", error);
@@ -16,10 +16,10 @@ router.get("/", authenticateToken, async (req, res) => {
 
 router.post("/", authenticateToken, async (req, res) => {
   try {
-    const { username } = req.user;
+    const { email } = req.user;
     const { vehicle } = req.body;
     const watchlist = new Watchlist({
-      username: username,
+      email: email,
       vehicle: vehicle,
     });
     await watchlist.save();

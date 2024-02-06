@@ -8,16 +8,16 @@ const stripe = require("stripe")(stripeSecretKey);
 router.post('/', async (req, res) => {
   const { paymentIntentId } = req.body;
 
+  Transaction.deleteOne({ paymentIntentId: paymentIntentId });
+
   try {
     const refund = await stripe.refunds.create({
       payment_intent: paymentIntentId,
     });
 
-    console.log(refund);
-
     res.status(200).json({ message: 'Refund processed successfully', refund });
   } catch (error) {
-    consol.log(error);
+    console.log(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
