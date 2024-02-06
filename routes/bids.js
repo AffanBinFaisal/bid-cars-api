@@ -13,6 +13,6 @@ router.get("/lost", authenticateToken, BidController.getLostBids);
 
 router.post("/", authenticateToken, BidController.createBid);
 
-router.post('/update', BidController.updateBid );
+router.post("/update", BidController.updateBid );
 
 module.exports = router;

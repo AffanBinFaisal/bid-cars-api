@@ -14,6 +14,9 @@ const transactionSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  paymentIntentId: {
+    type: String,
+  },
 });
 
 const Transaction = mongoose.model('Transaction', transactionSchema);

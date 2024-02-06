@@ -1,13 +1,7 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
+const transporter = require("./transporter/transporter");
 
-const sendMail = (username, vehicle) => {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.USER,
-      pass: process.env.PASS,
-    }
-  });
+const sendBidMail = (username, vehicle) => {
 
   const mailOptions = {
     from: process.env.USER,
@@ -43,4 +37,4 @@ const sendMail = (username, vehicle) => {
   });
 }
 
-module.exports = sendMail;
+module.exports = sendBidMail;

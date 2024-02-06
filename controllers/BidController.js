@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const Bid = require("./../models/Bid");
 const User = require("./../models/User");
-const sendMail = require("./../utils/sendMail");
+const sendMail = require("./../utils/mails/sendBidMail");
 
 const fetchBids = async (req, res, resultFilter) => {
   try {

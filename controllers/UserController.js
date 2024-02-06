@@ -2,7 +2,9 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("./../models/User");
+require('dotenv').config();
 const secretKey = 'your-secret-key';
+const serverUrl = process.env.SERVER_URL
 
 const loginUser = async (req, res) => {
   try {
@@ -29,12 +31,15 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
   const { username, password } = req.body;
+  const secretKey = 'your-secret-key';
   if (username && password) {
     const existingUsersList = User.find({ username: username });
     if (existingUsersList.length == 0) {
-      const user = User({ username: username, password: password });
+      const verificationToken = Buffer.from(`${username}:${secretKey}`).toString('base64');
+      const user = User({ username: username, password: password, verificationToken: verificationToken, verified: false });
       await user.save();
       const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
+      sendVerificationMail(recipient, verificationToken);
       res.status(200).json({ token });
     }
     else {

@@ -7,6 +7,6 @@ const authenticateToken = require("./../middlewares/authenticate");
 const PaymentController = require("./../controllers/PaymentController")
 
 
-router.get('/', authenticateToken, PaymentController.getSessionUrl);
+router.post('/', authenticateToken, PaymentController.getSessionUrl);
 
 module.exports = router;

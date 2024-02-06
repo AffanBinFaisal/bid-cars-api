@@ -11,26 +11,30 @@ const stripe = require("stripe")(stripeSecretKey);
 
 const Transaction = require("./../models/Transaction");
 const User = require("./../models/User");
-const authenticateToken = require("../middlewares/authenticate");
+const Session = require("./../models/Session");
+
+const authenticateToken = require("./../middlewares/authenticate");
 
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { session_id, amount, description } = req.query;
-    const { username } = req.user
+    const { email } = req.user
+    const currentSession = Session.findOne({ email: email });
+    const { sessionId, paymentIntentId } = currentSession;
 
-    const session = await stripe.checkout.sessions.retrieve(session_id);
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status === 'paid') {
       const transaction = new Transaction({
         amount: amount,
         currency: 'usd',
         description: description,
+        paymentIntentId: paymentIntentId
       });
 
       await transaction.save();
 
       const user = await User.findOneAndUpdate(
-        { username: "affan" },
+        { email: email },
         {
           $inc: {
             biddingPower: amount,
