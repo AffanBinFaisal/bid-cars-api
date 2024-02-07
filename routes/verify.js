@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("./../models/User");
 
-router.post("/:token", async (req, res) => {
+router.get("/:token", async (req, res) => {
   try {
     const token = req.params.token;
 

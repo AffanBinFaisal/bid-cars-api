@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+require('dotenv').config();
+const secretKey = process.env.JWT_SECRET;
+
 const User = require("./../models/User");
 
 // Route to reset password
-router.post('/reset-password/:token', async (req, res) => {
+router.post('/:token', async (req, res) => {
   const token = req.params.token;
   const { newPassword } = req.body;
 
@@ -18,17 +23,18 @@ router.post('/reset-password/:token', async (req, res) => {
     }
 
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    //const salt = await bcrypt.genSalt(10);
+    //const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     // Update user password and clear verification token
-    user.password = hashedPassword;
+    user.password = newPassword;
     user.verificationToken = undefined;
     await user.save();
 
     res.status(200).json({ message: 'Password reset successful' });
   } catch (error) {
     console.error(error);
-    res.status(401).json({ error: 'Invalid token' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

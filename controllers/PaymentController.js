@@ -43,7 +43,8 @@ const getSessionUrl = async (req, res) => {
     const session = await createCheckoutSession(amount, description);
     const sessionUrl = session.url;
     const sessionId = session.id;
-    const currentSession = Session.findOne({ email: email });
+    const currentSession = await Session.findOne({ email: email });
+
     if (!currentSession) {
       const newSession = Session(
         {
@@ -54,6 +55,8 @@ const getSessionUrl = async (req, res) => {
       );
       await newSession.save();
     }else{
+      const canceledSession = await stripe.checkout.sessions.expire(currentSession.sessionId);
+      console.log(canceledSession);
       currentSession.sessionId = sessionId;
       currentSession.sessionUrl = sessionUrl;
       await currentSession.save();

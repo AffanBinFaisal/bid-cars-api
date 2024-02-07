@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const User = require("./../models/User");
+const jwt = require("jsonwebtoken");
+require('dotenv').config();
+const resetPasswordMail = require("./../utils/mails/resetPasswordMail");
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-const serverUrl = process.env.SERVER_URL;
+const secretKey = process.env.JWT_SECRET;
 
-// Route to request a password reset
-router.post('/forgot-password', async (req, res) => {
+router.post('/', async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -16,10 +17,8 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Generate a new verification token
-    const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const verificationToken = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
 
-    // Save the new verification token
     user.verificationToken = verificationToken;
     await user.save();
 

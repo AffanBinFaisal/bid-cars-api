@@ -6,7 +6,11 @@ const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripe = require("stripe")(stripeSecretKey);
 
 router.post('/', async (req, res) => {
+
+  const { email } = req.body;
   const { paymentIntentId } = req.body;
+
+
 
   Transaction.deleteOne({ paymentIntentId: paymentIntentId });
 
@@ -22,4 +26,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router; 

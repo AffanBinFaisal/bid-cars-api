@@ -1,17 +1,19 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const User = require("./../models/User");
 require('dotenv').config();
-const secretKey = 'your-secret-key';
-const serverUrl = process.env.SERVER_URL
+
+const User = require("./../models/User");
+const sendVerificationMail = require("./../utils/mails/sendVerificationMail");
+const secretKey = process.env.JWT_SECRET;
 
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email });
     if (user) {
-      if (await bcrypt.compare(password, user.password)) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (isPasswordValid) {
         const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
         res.status(200).json({ token });
       } else {
@@ -28,15 +30,14 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
   const { email, password } = req.body;
-  const secretKey = 'your-secret-key';
   if (email && password) {
-    const existingUsersList = User.find({ email: email });
-    if (existingUsersList.length == 0) {
+    const existingUser = await User.findOne({ email: email });
+    if (!existingUser) {
       const verificationToken = Buffer.from(`${email}:${secretKey}`).toString('base64');
       const user = User({ email: email, password: password, verificationToken: verificationToken, verified: false });
       await user.save();
       const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
-      sendVerificationMail(recipient, verificationToken);
+      sendVerificationMail(email, verificationToken);
       res.status(200).json({ token });
     }
     else {
