@@ -1,4 +1,4 @@
-const mongoose = require("./db/db");
+const mongoose = require("./mongoose/mongoose");
 
 const shippingSchema = new mongoose.Schema({
   email: {

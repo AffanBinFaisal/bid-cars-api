@@ -1,4 +1,4 @@
-const mongoose = require("./db/db");
+const mongoose = require("./mongoose/mongoose");
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
@@ -14,11 +14,8 @@ const userSchema = new mongoose.Schema({
   deposit: {
     type: Number,
   },
-  biddingPower: {
-    type: Number,
-  },
-  totalBidsAmount: {
-    type: Number,
+  balance: {
+    type: Number
   },
   verified: {
     type: Boolean,

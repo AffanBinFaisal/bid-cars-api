@@ -1,40 +1,14 @@
-const express = require("express");
 require('dotenv').config();
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-const serverUrl = process.env.SERVER_URL;
-
 const stripe = require("stripe")(stripeSecretKey);
 
-const Session = require("./../models/Session");
+const User = require("../../models/User");
+const Transaction = require("../../models/Transaction");
+const Session = require("../models/Session");
 
-const createCheckoutSession = async (amount, description) => {
-  try {
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [{
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: description,
-          },
-          unit_amount: amount,
-        },
-        quantity: 1,
-      }],
-      mode: 'payment',
-      success_url: `${serverUrl}/success`,
-      cancel_url: `${serverUrl}/cancel`,
-    });
-
-    console.log('Checkout Session created:', session.id);
-    return session;
-  } catch (error) {
-    console.error('Error creating Checkout Session:', error.message);
-    throw error;
-  }
-}
+const refundAmount = require("../../utils/payment/refundAmount");
+const createCheckoutSession = require("./../utils/createCheckoutSession");
 
 const getSessionUrl = async (req, res) => {
   try {
@@ -56,7 +30,6 @@ const getSessionUrl = async (req, res) => {
       await newSession.save();
     }else{
       const canceledSession = await stripe.checkout.sessions.expire(currentSession.sessionId);
-      console.log(canceledSession);
       currentSession.sessionId = sessionId;
       currentSession.sessionUrl = sessionUrl;
       await currentSession.save();
@@ -68,6 +41,70 @@ const getSessionUrl = async (req, res) => {
   }
 }
 
+const withdrawAmount = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const { amount } = req.body;
+
+    const user = await User.findOne({ email: email });
+
+    if (user.balance < amount) {
+      res.status(400).json({ error: "Insufficient Fund" });
+      return;
+    }
+
+    const transactions = await Transaction.find({
+      email: email,
+      refunded: false,
+    }).sort({ balance: 1 });
+
+    let remainingAmount = amount;
+
+    for (const transaction of transactions) {
+      const { paymentIntentId, balance } = transaction;
+
+      if (transaction.balance >= remainingAmount) {
+        try {
+          const refund = await refundAmount(paymentIntentId, remainingAmount);
+        } catch (refundError) {
+          console.log(refundError);
+          res.status(500).json({ error: `Internal Server Error: ${refundError.message}` });
+          return;
+        }
+
+        transaction.balance -= remainingAmount;
+        remainingAmount = 0;
+        await transaction.save();
+        break;
+      } else {
+        try {
+          const refund = await refundAmount(paymentIntentId, balance);
+        } catch (refundError) {
+          console.log(refundError);
+          res.status(500).json({ error: `Internal Server Error: ${refundError.message}` });
+          return;
+        }
+
+        remainingAmount -= balance;
+        transaction.balance = 0;
+        transaction.refunded = true;
+        await transaction.save();
+      }
+    }
+
+    user.balance -= amount;
+    await user.save();
+
+    res.status(200).json({ message: `You have successfully withdrawn $${amount}` });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: `Internal Server Error: ${error.message}` });
+  }
+}
+
+
 module.exports = {
   getSessionUrl: getSessionUrl,
+  withdrawAmount: withdrawAmount,
 }

@@ -1,4 +1,4 @@
-const mongoose = require("./db/db");
+const mongoose = require("./mongoose/mongoose");
 
 const transactionSchema = new mongoose.Schema({
   email: {
@@ -13,6 +13,12 @@ const transactionSchema = new mongoose.Schema({
   },
   paymentIntentId: {
     type: String,
+  },
+  balance: {
+    type: String,
+  },
+  refunded: {
+    type: Boolean,
   },
 });
 

@@ -1,4 +1,4 @@
-const mongoose = require("./db/db");
+const mongoose = require("./mongoose/mongoose");
 
 const bidSchema = new mongoose.Schema({
   email: {
@@ -20,6 +20,12 @@ const bidSchema = new mongoose.Schema({
   active: {
     type: Boolean,
   },
+  paid: {
+    type: Boolean,
+  },
+  totalCost: {
+    type: Number,
+  }
 });
 
 const Bid = mongoose.model('Bid', bidSchema);

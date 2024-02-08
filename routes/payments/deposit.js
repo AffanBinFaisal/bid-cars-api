@@ -3,8 +3,8 @@ require('dotenv').config();
 
 const router = express.Router();
 
-const authenticateToken = require("./../middlewares/authenticate");
-const PaymentController = require("./../controllers/PaymentController")
+const authenticateToken = require("../../middlewares/authenticate");
+const PaymentController = require("../../controllers/PaymentController")
 
 
 router.post('/', authenticateToken, PaymentController.getSessionUrl);

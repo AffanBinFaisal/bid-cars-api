@@ -6,21 +6,19 @@ const app = express();
 const port = 8001;
 
 // Routes
-const loginRouter = require("./routes/login");
-const registerRouter = require("./routes/register");
-const verificationRouter = require("./routes/verify");
-const carsRouter = require("./routes/cars");
-const paymentRouter = require("./routes/payment");
+const loginRouter = require("./routes/auth/login");
+const registerRouter = require("./routes/auth/register");
+const verificationRouter = require("./routes/auth/verify");
+const carsRouter = require("./routes/cars/cars");
+const depositRouter = require("./routes/payments/deposit");
 const successRouter = require("./routes/success");
 const watchlistRouter = require("./routes/watchlist");
 const bidsRouter = require("./routes/bids");
 const shippingRouter = require("./routes/shipping");
-const refundRouter = require("./routes/refund");
-const forgotPasswordRouter = require("./routes/forgotPassword");
-const resetPasswordRouter = require("./routes/resetPassword");
+const refundRouter = require("./routes/payments/refund");
+const forgotPasswordRouter = require("./routes/auth/forgotPassword");
+const resetPasswordRouter = require("./routes/auth/resetPassword");
 const transactionsRouter = require("./routes/transactions");
-
-
 
 // Middlewares
 app.use(cors());
@@ -29,23 +27,23 @@ app.use(express.json());
 
 
 // Authentication
-app.use("/register", registerRouter);
-app.use("/login", loginRouter);
-app.use("/verify", verificationRouter);
-app.use("/forgot-password", forgotPasswordRouter);
-app.use("/reset-password", resetPasswordRouter);
+app.use("/auth", registerRouter);
+app.use("/auth", loginRouter);
+app.use("/auth", verificationRouter);
+app.use("/auth", forgotPasswordRouter);
+app.use("/auth", resetPasswordRouter);
 
 // Cars
 app.use("/cars", carsRouter);
 
 // Payments
-app.use("/transactions", transactionsRouter);
-app.use("/deposit", paymentRouter);
-app.use("/refund", refundRouter);
-app.use("/success", successRouter);
+app.use("/payments", transactionsRouter);
+app.use("/payments", depositRouter);
+app.use("/payments", refundRouter);
+app.use("/payments", successRouter);
 
 // Watchlist
-app.use("/watchlist", watchlistRouter)
+app.use("/watchlist", watchlistRouter);
 
 // Bids
 app.use("/bids", bidsRouter);

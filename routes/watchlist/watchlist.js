@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const authenticateToken = require("./../middlewares/authenticate");
-const Watchlist = require("./../models/Watchlist");
+const authenticateToken = require("../../middlewares/authenticate");
+const Watchlist = require("../../models/Watchlist");
 
 router.get("/", authenticateToken, async (req, res) => {
   try {

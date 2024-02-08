@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 require('dotenv').config();
 const secretKey = process.env.JWT_SECRET;
 
-const User = require("./../models/User");
+const User = require("../../models/User");
 
 // Route to reset password
 router.post('/:token', async (req, res) => {

@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const User = require("./../models/User");
+const User = require("../../models/User");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
-const resetPasswordMail = require("./../utils/mails/resetPasswordMail");
+const resetPasswordMail = require("../../utils/mails/resetPasswordMail");
 
 const secretKey = process.env.JWT_SECRET;
 

@@ -1,5 +1,4 @@
-const express = require("express");
-const Shipping = require("./../models/Shipping");
+const Shipping = require("../models/Shipping");
 
 const getActiveShippings = async (req, res) => {
   try {

@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 require('dotenv').config();
 
-const authenticateToken = require("./../middlewares/authenticate");
-const BidController = require("./../controllers/BidController");
+const authenticateToken = require("../../middlewares/authenticate");
+const BidController = require("../../controllers/BidController");
 
 router.get("/current", authenticateToken, BidController.getCurrentBids);
 

@@ -1,10 +1,9 @@
-const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require('dotenv').config();
 
-const User = require("./../models/User");
-const sendVerificationMail = require("./../utils/mails/sendVerificationMail");
+const User = require("../models/User");
+const sendVerificationMail = require("../utils/mails/sendVerificationMail");
 const secretKey = process.env.JWT_SECRET;
 
 const loginUser = async (req, res) => {

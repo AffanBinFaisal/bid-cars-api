@@ -9,11 +9,11 @@ const serverUrl = process.env.SERVER_URL;
 
 const stripe = require("stripe")(stripeSecretKey);
 
-const Transaction = require("./../models/Transaction");
-const User = require("./../models/User");
-const Session = require("./../models/Session");
+const Transaction = require("../../models/Transaction");
+const User = require("../../models/User");
+const Session = require("../../models/Session");
 
-const authenticateToken = require("./../middlewares/authenticate");
+const authenticateToken = require("../../middlewares/authenticate");
 
 router.get('/', authenticateToken, async (req, res) => {
   try {
@@ -39,7 +39,7 @@ router.get('/', authenticateToken, async (req, res) => {
         { email: email },
         {
           $inc: {
-            biddingPower: amount,
+            balance: amount,
             deposit: amount
           }
         },

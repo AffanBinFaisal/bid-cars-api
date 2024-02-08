@@ -1,9 +1,8 @@
-const express = require("express");
 require('dotenv').config();
 
-const Bid = require("./../models/Bid");
-const User = require("./../models/User");
-const sendMail = require("./../utils/mails/sendBidMail");
+const Bid = require("../models/Bid");
+const User = require("../models/User");
+const sendMail = require("../utils/mails/sendBidMail");
 
 const fetchBids = async (req, res, resultFilter) => {
   try {
@@ -49,7 +48,7 @@ const createBid = async (req, res) => {
 
     // Fetch user details
     const user = await User.findOne({ email: email });
-    const { biddingPower, totalBidsAmount } = user;
+    const { balance } = user;
 
     // Extract request body details
     const { vehicle, amount, merchant } = req.body;
@@ -58,7 +57,7 @@ const createBid = async (req, res) => {
     // Check bidding power based on the merchant
     if (merchant === "IAAI") {
       requiredBiddingPower = 1000;
-      if (biddingPower < requiredBiddingPower) {
+      if (balance < requiredBiddingPower) {
 
         console.log("Not enough bidding power for IAAI");
         return res.status(403).json({ error: "Not enough bidding power" });
@@ -66,8 +65,8 @@ const createBid = async (req, res) => {
     } else if (merchant === "COPART") {
       requiredBiddingPower = amount <= 6000 ? 600 : 0.1 * amount;
 
-      if (!(amount <= 6000 && biddingPower >= 600) ||
-        !(amount > 6000 || biddingPower >= requiredBiddingPower)) {
+      if (!(amount <= 6000 && balance >= 600) ||
+        !(amount > 6000 || balance >= requiredBiddingPower)) {
         console.log("Not enough bidding power for Copart");
         return res.status(403).json({ error: "Not enough bidding power" });
       }
@@ -89,7 +88,7 @@ const createBid = async (req, res) => {
       { email: email },
       {
         $inc: {
-          biddingPower: -requiredBiddingPower,
+          balance: -requiredBiddingPower,
         }
       },
       { new: true } // to return the modified document
@@ -136,12 +135,12 @@ const updateBid = async (req, res) => {
     if (updatedBid) {
       console.log('Updated bid:', updatedBid);
 
-      // Update user biddingPower
+      // Update user balance
       const updatedUser = await User.findOneAndUpdate(
         { email: email },
         {
           $inc: {
-            biddingPower: updatedBid.requiredBiddingPower,
+            balance: updatedBid.requiredBiddingPower,
           },
         },
         { new: true }
