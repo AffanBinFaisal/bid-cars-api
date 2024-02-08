@@ -1,4 +1,4 @@
-const mongoose = require("./db/db");
+const mongoose = require("./mongoose/mongoose");
 
 const sessionSchema = new mongoose.Schema({
   email: {

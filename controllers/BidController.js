@@ -2,7 +2,8 @@ require('dotenv').config();
 
 const Bid = require("../models/Bid");
 const User = require("../models/User");
-const sendMail = require("../utils/mails/sendBidMail");
+const sendBidMail = require("../utils/mails/bids/sendBidMail");
+const sendBidConfirmationMail = require("../utils/mails/bids/sendBidConfirmationMail");
 
 const fetchBids = async (req, res, resultFilter) => {
   try {
@@ -101,7 +102,8 @@ const createBid = async (req, res) => {
     }
 
     // Send email notification
-    sendMail(email, vehicle);
+    sendBidMail(email, vehicle);
+    sendBidConfirmationMail
 
     // Respond with success
     res.status(200).end();

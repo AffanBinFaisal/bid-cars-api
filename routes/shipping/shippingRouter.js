@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const authenticateToken = require("../../middlewares/authenticate");
+const authenticateToken = require("../../middlewares/authenticateToken");
 const ShippingController = require("../../controllers/ShippingController");
 
 router.get("/active", authenticateToken, ShippingController.getActiveShippings);

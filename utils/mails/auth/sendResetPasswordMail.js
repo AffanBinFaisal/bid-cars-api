@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-const transporter = require("./transporter/transporter");
+const transporter = require("../transporter/transporter");
 
 const serverUrl = process.env.SERVER_URL;
 

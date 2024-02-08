@@ -25,6 +25,9 @@ const bidSchema = new mongoose.Schema({
   },
   totalCost: {
     type: Number,
+  },
+  daysLeft: {
+    type: Number,
   }
 });
 

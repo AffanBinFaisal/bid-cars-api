@@ -5,7 +5,9 @@ const User = require("../../models/User");
 const Bid = require("../../models/Bid");
 const Shipping = require("../../models/Shipping");
 
-router.post("/", async (req, res) => {
+const authenticateToken = require("../../middlewares/authenticateToken");
+
+router.post("/", authenticateToken, async (req, res) => {
   try {
     const { email } = req.user;
     const { vehicle } = req.body;
