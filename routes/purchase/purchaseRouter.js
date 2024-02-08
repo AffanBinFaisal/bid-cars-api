@@ -5,6 +5,8 @@ const User = require("../../models/User");
 const Bid = require("../../models/Bid");
 const Shipping = require("../../models/Shipping");
 
+const sendPurchaseMail = require("../../utils/mails/purchase/sendPurchaseMail");
+
 const authenticateToken = require("../../middlewares/authenticateToken");
 
 router.post("/", authenticateToken, async (req, res) => {
@@ -28,6 +30,8 @@ router.post("/", authenticateToken, async (req, res) => {
           active: true,
         });
         await shipping.save();
+
+        sendPurchaseMail(email, vehicle);
 
         res.status(200).json({
           message: "Payment successful. Shipping initiated.",

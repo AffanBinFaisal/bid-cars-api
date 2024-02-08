@@ -4,6 +4,8 @@ const Bid = require("../models/Bid");
 const User = require("../models/User");
 const sendBidMail = require("../utils/mails/bids/sendBidMail");
 const sendBidConfirmationMail = require("../utils/mails/bids/sendBidConfirmationMail");
+const sendWonMail = require("../utils/mails/bids/sendBidWonMail");
+const sendBidLostMail = require("../utils/mails/bids/sendBidLostMail");
 
 const fetchBids = async (req, res, resultFilter) => {
   try {
@@ -103,7 +105,7 @@ const createBid = async (req, res) => {
 
     // Send email notification
     sendBidMail(email, vehicle);
-    sendBidConfirmationMail
+    sendBidConfirmationMail(email, vehicle);
 
     // Respond with success
     res.status(200).end();
@@ -147,6 +149,15 @@ const updateBid = async (req, res) => {
         },
         { new: true }
       );
+
+      const { vehicle } = updatedBid;
+
+      if (result) {
+        sendBidWonMail(email, vehicle);
+      }
+      else {
+        sendBidLostMail(email, vehicle);
+      }
 
       res.status(200).json({ message: 'Bid updated successfully', bid: updatedBid, user: updatedUser });
     } else {

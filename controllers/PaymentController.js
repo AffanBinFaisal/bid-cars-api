@@ -10,6 +10,9 @@ const Session = require("../models/Session");
 const refundAmount = require("../utils/payment/refundAmount");
 const createCheckoutSession = require("../utils/payment/createCheckoutSession");
 
+const sendCashDepositMail = require("../utils/mails/payments/sendCashDepositMail");
+const sendCashWithdrawalMail = require("../utils/mails/payments/sendCashWithdrawalMail");
+
 const getSessionUrl = async (req, res) => {
   try {
     const { email } = req.user;
@@ -43,8 +46,7 @@ const getSessionUrl = async (req, res) => {
 
 const withdrawAmount = async (req, res) => {
   try {
-    const { email } = req.body;
-    const { amount } = req.body;
+    const { email, amount } = req.body;
 
     const user = await User.findOne({ email: email });
 
@@ -95,6 +97,8 @@ const withdrawAmount = async (req, res) => {
     user.balance -= amount;
     await user.save();
 
+    sendCashWithdrawalAmount(email, amount);
+
     res.status(200).json({ message: `You have successfully withdrawn $${amount}` });
 
   } catch (error) {
@@ -107,16 +111,19 @@ const processPayment = async (req, res) => {
   try {
     const { email } = req.user
     const currentSession = Session.findOne({ email: email });
-    const { sessionId, paymentIntentId } = currentSession;
+    const { sessionId } = currentSession;
 
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status === 'paid') {
+
+      const paymentIntentId = session.payment_intent;
+      const amount = session.amount_total;
+
       const transaction = new Transaction({
         amount: amount,
         currency: 'usd',
-        description: description,
-        paymentIntentId: paymentIntentId
+        paymentIntentId: paymentIntentId,
       });
 
       await transaction.save();
@@ -147,6 +154,8 @@ const processPayment = async (req, res) => {
           console.log('Document deleted successfully');
         }
       });
+
+      sendCashDepositMail(email, amount);
 
       res.status(200).json({ message: "Payment successfull" });
     } else {
