@@ -17,7 +17,7 @@ const getSessionUrl = async (req, res) => {
   try {
     const { email } = req.user;
     const { amount, description } = req.body;
-    const session = await createCheckoutSession(amount, description);
+    const session = await createCheckoutSession(amount, description, email);
     const sessionUrl = session.url;
     const sessionId = session.id;
     const currentSession = await Session.findOne({ email: email });
@@ -46,7 +46,8 @@ const getSessionUrl = async (req, res) => {
 
 const withdrawAmount = async (req, res) => {
   try {
-    const { email, amount } = req.body;
+    const {email} = req.user;
+    const { amount } = req.body;
 
     const user = await User.findOne({ email: email });
 
@@ -97,7 +98,7 @@ const withdrawAmount = async (req, res) => {
     user.balance -= amount;
     await user.save();
 
-    sendCashWithdrawalAmount(email, amount);
+    sendCashWithdrawalMail(email, amount);
 
     res.status(200).json({ message: `You have successfully withdrawn $${amount}` });
 
@@ -109,8 +110,8 @@ const withdrawAmount = async (req, res) => {
 
 const processPayment = async (req, res) => {
   try {
-    const { email } = req.user
-    const currentSession = Session.findOne({ email: email });
+    const { email } = req.query;
+    const currentSession = await Session.findOne({ email: email });
     const { sessionId } = currentSession;
 
     const session = await stripe.checkout.sessions.retrieve(sessionId);
@@ -121,9 +122,11 @@ const processPayment = async (req, res) => {
       const amount = session.amount_total;
 
       const transaction = new Transaction({
+        email: email,
         amount: amount,
         currency: 'usd',
         paymentIntentId: paymentIntentId,
+        balance: amount,
       });
 
       await transaction.save();
@@ -147,14 +150,8 @@ const processPayment = async (req, res) => {
         console.log("User not found");
       }
 
-      Session.deleteOne({ email: email }, (err) => {
-        if (err) {
-          console.error('Error deleting document:', err);
-        } else {
-          console.log('Document deleted successfully');
-        }
-      });
-
+      const deletedSession = await Session.deleteOne({ email: email });
+       
       sendCashDepositMail(email, amount);
 
       res.status(200).json({ message: "Payment successfull" });

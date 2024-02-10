@@ -1,0 +1,66 @@
+
+### Registration
+
+POST http://localhost:8001/auth/register
+Content-Type: application/x-www-form-urlencoded
+
+email=affanfaisal442@gmail.com&password=affan
+
+### Login
+
+POST http://localhost:8001/auth/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+email=affanfaisal442@gmail.com&password=affan
+
+### Payments
+
+GET http://localhost:8001/payments
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzQ3OTc4NiwiZXhwIjoxNzA3NDgzMzg2fQ._ouUWQI_GJp5JrTprI0Vo0xM2T3avdh5XNjgAE2IVj8
+
+### Deposit
+
+POST http://localhost:8001/payments/deposit HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzU2MDgwMiwiZXhwIjoxNzA3NTY0NDAyfQ.Zvw7MDlUAKXvpy94jOubycSMyLrjDw3qmbrzvYb9IFM
+
+amount=20000&description=deposit
+
+### Withdraw
+
+POST http://localhost:8001/payments/withdraw HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzQ3OTc4NiwiZXhwIjoxNzA3NDgzMzg2fQ._ouUWQI_GJp5JrTprI0Vo0xM2T3avdh5XNjgAE2IVj8
+
+amount=2000
+
+### Bids
+
+POST http://localhost:8001/bids HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzQ3OTc4NiwiZXhwIjoxNzA3NDgzMzg2fQ._ouUWQI_GJp5JrTprI0Vo0xM2T3avdh5XNjgAE2IVj8
+
+vehicle=xyz&amount=10000&merchant=IAAI
+
+### Update Bid
+
+POST http://localhost:8001/bids/update HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzQ4NTY5MywiZXhwIjoxNzA3NDg5MjkzfQ.Bf5K6Sdaj0ffgTMBBYyj1wFv-Oai28QvzglJ_le8KWU
+
+id=65c617f802cb3646776db94c&result=true
+
+
+### Purchase
+
+POST http://localhost:8001/purchase HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzU2MDgwMiwiZXhwIjoxNzA3NTY0NDAyfQ.Zvw7MDlUAKXvpy94jOubycSMyLrjDw3qmbrzvYb9IFM
+
+vehicle=xyz
+
+
+### Success
+
+GET http://localhost:8001/payments/success HTTP/1.1
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzQ2Mjk1NywiZXhwIjoxNzA3NDY2NTU3fQ.LCX8C3u18FJaoXxkHFDQ56j0pEemsHrGaSRTHiE5epY

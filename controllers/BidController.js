@@ -1,10 +1,12 @@
 require('dotenv').config();
 
+const mongoose = require("../models/mongoose/mongoose");
+
 const Bid = require("../models/Bid");
 const User = require("../models/User");
 const sendBidMail = require("../utils/mails/bids/sendBidMail");
 const sendBidConfirmationMail = require("../utils/mails/bids/sendBidConfirmationMail");
-const sendWonMail = require("../utils/mails/bids/sendBidWonMail");
+const sendBidWonMail = require("../utils/mails/bids/sendBidWonMail");
 const sendBidLostMail = require("../utils/mails/bids/sendBidLostMail");
 
 const fetchBids = async (req, res, resultFilter) => {
@@ -55,6 +57,12 @@ const createBid = async (req, res) => {
 
     // Extract request body details
     const { vehicle, amount, merchant } = req.body;
+
+    const existingBid = await Bid.findOne({ email: email, vehicle: vehicle });
+    if (existingBid) {
+      return res.status(400).json({ error: "Bid already exists" });
+    }
+
     var requiredBiddingPower;
 
     // Check bidding power based on the merchant
@@ -80,7 +88,6 @@ const createBid = async (req, res) => {
       email: email,
       vehicle: vehicle,
       amount: amount,
-      active: 1,
       requiredBiddingPower: requiredBiddingPower,
     });
 
@@ -117,52 +124,51 @@ const createBid = async (req, res) => {
 
 const updateBid = async (req, res) => {
   try {
-    const { email, id, result } = req.body;
+    const { id, result } = req.body;
 
-    // Validate if 'id' is a valid MongoDB ObjectId
     if (!mongoose.isValidObjectId(id)) {
       return res.status(400).json({ error: 'Invalid ObjectId' });
     }
 
-    // Update bid
-    const updatedBid = await Bid.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          result: result,
-          active: 0,
-        },
-      },
-      { new: true }
-    );
+    const bid = await Bid.findById(id);
 
-    if (updatedBid) {
-      console.log('Updated bid:', updatedBid);
+    if (bid) {
 
-      // Update user balance
-      const updatedUser = await User.findOneAndUpdate(
-        { email: email },
-        {
-          $inc: {
-            balance: updatedBid.requiredBiddingPower,
-          },
-        },
-        { new: true }
-      );
+      if (bid.active) {
 
-      const { vehicle } = updatedBid;
+        const { email, vehicle, requiredBiddingPower } = bid;
 
-      if (result) {
-        sendBidWonMail(email, vehicle);
+        if (result == "true") {
+          sendBidWonMail(email, vehicle);
+        }
+        else {
+          const updatedUser = await User.findOneAndUpdate(
+            { email: email },
+            {
+              $inc: {
+                balance: requiredBiddingPower,
+              },
+            },
+            { new: true }
+          );
+
+          sendBidLostMail(email, vehicle);
+        }
+
+        bid.result = result;
+        bid.active = false;
+        await bid.save();
+
+        return res.status(200).json({ message: 'Bid updated successfully' });
+
+      } else {
+
+        return res.status(403).json({ message: 'Bid results have already been announced' });
       }
-      else {
-        sendBidLostMail(email, vehicle);
-      }
 
-      res.status(200).json({ message: 'Bid updated successfully', bid: updatedBid, user: updatedUser });
     } else {
       console.log('Bid not found');
-      res.status(404).json({ error: 'Bid not found' });
+      return res.status(404).json({ error: 'Bid not found' });
     }
   } catch (error) {
     console.error('Error updating bid:', error);

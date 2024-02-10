@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const transporter = require("../transporter/transporter");
 
-const sendBidWonMail = (email, vehicle) => {
+const sendBidWonMail = (email, vehicle, remainingAmount) => {
 
   const mailOptions = {
     from: process.env.USER,
@@ -20,7 +20,6 @@ const sendBidWonMail = (email, vehicle) => {
           <li><strong>Vehicle:</strong> ${vehicle}</li>
         </ul>
         <p>Please proceed to pay the remaining amount as soon as possible to secure your purchase.</p>
-        <p><strong>Remaining Amount:</strong> $${remainingAmount}</p>
         <p style="color: #888; font-size: 12px;">This is an automated notification. Please do not reply to this email.</p>
       </div>
     </body>

@@ -5,7 +5,7 @@ const serverUrl = process.env.SERVER_URL;
 
 const sendVerificationMail = (recipient, verificationToken) => {
 
-  const verificationLink = `${serverUrl}/verify/${verificationToken}`;
+  const verificationLink = `${serverUrl}/auth/verify/${verificationToken}`;
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',

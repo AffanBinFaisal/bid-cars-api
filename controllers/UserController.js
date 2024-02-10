@@ -34,7 +34,9 @@ const registerUser = async (req, res) => {
     const existingUser = await User.findOne({ email: email });
     if (!existingUser) {
       const verificationToken = Buffer.from(`${email}:${secretKey}`).toString('base64');
-      const user = User({ email: email, password: password, verificationToken: verificationToken, verified: false });
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      const user = User({ email: email, password: hashedPassword, verificationToken: verificationToken });
       await user.save();
       const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
       sendVerificationMail(email, verificationToken);
@@ -69,7 +71,7 @@ const verifyToken = async (req, res) => {
 }
 
 const sendPasswordResetMail = async (req, res) => {
-  
+
   const { email } = req.body;
 
   try {
@@ -107,7 +109,9 @@ const resetPassword = async (req, res) => {
       return res.status(404).json({ error: 'Invalid token or user not found' });
     }
 
-    user.password = newPassword;
+    const salt = await bcrypt.genSalt(10);
+    const newHashedPassword = await bcrypt.hash(newPassword, salt);
+    user.password = newHashedPassword;
     user.verificationToken = undefined;
     await user.save();
 
@@ -123,5 +127,5 @@ module.exports = {
   registerUser,
   verifyToken,
   sendPasswordResetMail,
-  resetPassword,  
+  resetPassword,
 };

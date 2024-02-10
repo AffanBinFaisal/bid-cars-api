@@ -19,6 +19,7 @@ const bidSchema = new mongoose.Schema({
   },
   active: {
     type: Boolean,
+    default: true,
   },
   paid: {
     type: Boolean,

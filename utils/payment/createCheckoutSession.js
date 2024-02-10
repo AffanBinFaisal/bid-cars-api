@@ -5,7 +5,7 @@ const serverUrl = process.env.SERVER_URL;
 
 const stripe = require("stripe")(stripeSecretKey);
 
-const createCheckoutSession = async (amount, description) => {
+const createCheckoutSession = async (amount, description, email) => {
   try {
 
     const session = await stripe.checkout.sessions.create({
@@ -21,7 +21,7 @@ const createCheckoutSession = async (amount, description) => {
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `${serverUrl}/success`,
+      success_url: `${serverUrl}/payments/success?email=${email}`,
       cancel_url: `${serverUrl}/cancel`,
     });
 
