@@ -16,6 +16,7 @@ const purchaseRouter = require("./routes/purchase/purchaseRouter");
 
 const app = express();
 const port = process.env.PORT;
+const host = process.env.HOST;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,6 +33,6 @@ app.use("/purchase", purchaseRouter);
 const job = cron.schedule('0 0 * * 1-5', runPaymentReminder);
 
 app.listen(port, () => {
-  console.log(`Server is listening at http://localhost:${port}`);
+  console.log(`Server is running at http://localhost:${port}`);
 });
 

@@ -14,7 +14,6 @@ const getVehicleByVin = async (req, res) => {
     });
 
     const cars = carsResponse.data;
-    console.log(cars);
     res.status(200).json(cars);
   } catch (error) {
     console.error(error);
@@ -24,12 +23,13 @@ const getVehicleByVin = async (req, res) => {
 
 const getVehiclesByFilters = async (req, res) => {
   try {
+    console.log(req.query);
     const apiUrl = `https://copart-iaai-api.com/api/v2/get-cars`;
     const response = await axios.post(apiUrl, {
-      params: {
-        api_token: apiToken,
-        ...req.query,
-      },
+      api_token: apiToken,
+      page:1,
+      per_page:20,
+      ...req.query,
     });
 
     const data = response.data;
@@ -47,7 +47,22 @@ const getMakes = async (req, res) => {
       api_token: apiToken,
     });
     const data = response.data;
-    console.log(data);
+    res.status(200).json(data);
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+const getModelByMake = async (req, res) => {
+  const {id} = req.params;
+  try {
+    const apiUrl = `https://copart-iaai-api.com/api/v1/get-model-by-make/${id}`;
+    const response = await axios.post(apiUrl, {
+      api_token: apiToken,
+    });
+    const data = response.data;
     res.status(200).json(data);
 
   } catch (error) {
@@ -63,7 +78,6 @@ const getVehiclesType = async (req, res) => {
       api_token: apiToken,
     });
     const data = response.data;
-    console.log(data);
     res.status(200).json(data);
 
   } catch (error) {
@@ -77,4 +91,5 @@ module.exports = {
   getVehiclesByFilters,
   getMakes,
   getVehiclesType,
+  getModelByMake
 };

@@ -10,4 +10,6 @@ router.get("/get-makes", CarController.getMakes);
 
 router.get("/get-vehicles-type", CarController.getVehiclesType);
 
+router.get("/get-model-by-make/:id", CarController.getModelByMake);
+
 module.exports = router;
