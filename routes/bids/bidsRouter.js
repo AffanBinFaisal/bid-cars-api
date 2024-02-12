@@ -4,20 +4,22 @@ require('dotenv').config();
 
 const authenticateToken = require("../../middlewares/authenticateToken");
 const adminOnly = require("../../middlewares/adminOnly");
-const BidController = require("../../controllers/BidController");
+const bidController = require("../../controllers/bidController");
 
-router.get("/current", authenticateToken, BidController.getCurrentBids);
+router.get("/current", authenticateToken, bidController.getCurrentBids);
 
-router.get("/won", authenticateToken, BidController.getWonBids);
+router.get("/won", authenticateToken, bidController.getWonBids);
 
-router.get("/lost", authenticateToken, BidController.getLostBids);
+router.get("/lost", authenticateToken, bidController.getLostBids);
 
-router.post("/", authenticateToken, BidController.createBid);
+router.post("/", authenticateToken, bidController.createBid);
 
 // Admin
 
-router.post("/update", adminOnly, BidController.updateBid);
+router.get("/all", adminOnly, bidController.getAllBids);
 
-router.delete("/delete", adminOnly, BidController.deleteBid);
+router.post("/update", adminOnly, bidController.updateBid);
+
+router.delete("/delete", adminOnly, bidController.deleteBid);
 
 module.exports = router;

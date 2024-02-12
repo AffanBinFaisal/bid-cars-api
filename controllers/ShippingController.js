@@ -22,6 +22,7 @@ const getCompletedShippings = async (req, res) => {
   }
 }
 
+
 const createShipping = async (req, res) => {
   const { email } = req.user;
   const { vehicle, status } = req.body;
@@ -39,6 +40,7 @@ const createShipping = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
 
 const updateShipping = async (req, res) => {
   const id = req.params.id; // Corrected the property name to access route parameters
@@ -64,7 +66,6 @@ const updateShipping = async (req, res) => {
 };
 
 
-
 const deleteShipping = async (req, res) => {
   const id = req.params.id;
   try {
@@ -82,10 +83,24 @@ const deleteShipping = async (req, res) => {
 };
 
 
+const getAllShippings = async (req, res) => {
+  const filters = req.query;
+  try {
+    const shippings = await Shipping.find(filters);
+    res.status(200).json({ shippings });
+  } catch (error) {
+    console.error("Error fetching shippings:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+
+}
+
+
 module.exports = {
   getActiveShippings,
   getCompletedShippings,
   createShipping,
   updateShipping,
   deleteShipping,
+  getAllShippings,
 }

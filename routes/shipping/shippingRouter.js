@@ -2,18 +2,20 @@ const express = require("express");
 const router = express.Router();
 const authenticateToken = require("../../middlewares/authenticateToken");
 const adminOnly = require("../../middlewares/adminOnly");
-const ShippingController = require("../../controllers/ShippingController");
+const shippingController = require("../../controllers/shippingController");
 
-router.get("/active", authenticateToken, ShippingController.getActiveShippings);
+router.get("/active", authenticateToken, shippingController.getActiveShippings);
 
-router.get("/completed", authenticateToken,  ShippingController.getCompletedShippings);
+router.get("/completed", authenticateToken,  shippingController.getCompletedShippings);
 
-router.post("/", authenticateToken,  ShippingController.createShipping);
+router.post("/", authenticateToken,  shippingController.createShipping);
 
 // Admin
 
-router.post("/update/:id", adminOnly , ShippingController.updateShipping);
+router.get("/all",adminOnly, shippingController.getAllShippings);
 
-router.delete("/delete/:id", adminOnly , ShippingController.deleteShipping);
+router.post("/update/:id", adminOnly , shippingController.updateShipping);
+
+router.delete("/delete/:id", adminOnly , shippingController.deleteShipping);
 
 module.exports = router;

@@ -192,6 +192,18 @@ const deleteBid = async (req, res) => {
   }
 };
 
+const getAllBids = async (req, res) => {
+  const filters = req.query;
+  try {
+    const bids = await Bid.find(filters);
+    res.status(200).json({ bids });
+  } catch (error) {
+    console.error("Error fetching bids:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+
+}
+
 module.exports = {
   getCurrentBids,
   getWonBids,
@@ -199,4 +211,5 @@ module.exports = {
   createBid,
   updateBid,
   deleteBid,
+  getAllBids,
 };
