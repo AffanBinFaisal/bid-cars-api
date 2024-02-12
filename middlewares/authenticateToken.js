@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const express = require("express");
 const secretKey = 'your-secret-key';
 
 const authenticateToken = async (req, res, next) => {

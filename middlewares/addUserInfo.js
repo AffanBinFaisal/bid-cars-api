@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const express = require("express");
 const secretKey = 'your-secret-key';
 
 const addUserInfo = (req, res, next) => {

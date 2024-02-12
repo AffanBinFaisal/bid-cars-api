@@ -73,7 +73,7 @@ const getModelByMake = async (req, res) => {
 
 const getVehiclesType = async (req, res) => {
   try {
-    const apiUrl = "https://copart-iaai-api.com/api/v1/get-vehicles-type";
+    const apiUrl = "https://copart-iaai-api.com/api/v1/get-active-lots";
     const response = await axios.post(apiUrl, {
       api_token: apiToken,
     });

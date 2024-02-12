@@ -41,30 +41,52 @@ const createShipping = async (req, res) => {
 }
 
 const updateShipping = async (req, res) => {
-  const id = req.param.id;
-  const { active, status } = req.body;
+  const id = req.params.id; // Corrected the property name to access route parameters
   try {
-    const updatedBid = await Bid.findByIdAndUpdate(
+    const { active, status } = req.body;
+    const updatedShipping = await Shipping.findByIdAndUpdate(
       id,
       {
         $set: {
-
-          active: false,
+          active: active,
           status: status,
         },
       },
       { new: true }
     );
+
+    if (!updatedShipping) {
+      return res.status(404).json({ error: "Shipping not found" });
+    }
     res.status(200).end();
   } catch (error) {
-    console.error("Error creating shipping:", error);
+    console.error("Error updating shipping:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
+
+
+const deleteShipping = async (req, res) => {
+  const id = req.params.id; // Corrected the property name to access route parameters
+  try {
+    const deletedShipping = await Shipping.findByIdAndDelete(id);
+
+    if (!deletedShipping) {
+      return res.status(404).json({ error: "Shipping not found" });
+    }
+
+    res.status(200).end();
+  } catch (error) {
+    console.error("Error deleting shipping:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 module.exports = {
   getActiveShippings,
   getCompletedShippings,
   createShipping,
   updateShipping,
+  deleteShipping,
 }
