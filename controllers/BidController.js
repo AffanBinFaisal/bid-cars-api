@@ -176,10 +176,27 @@ const updateBid = async (req, res) => {
   }
 }
 
+const deleteBid = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const deletedBid = await Bid.findByIdAndDelete(id);
+
+    if (!deletedBid) {
+      return res.status(404).json({ error: "Bid not found" });
+    }
+
+    res.status(200).end();
+  } catch (error) {
+    console.error("Error deleting bid:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getCurrentBids,
   getWonBids,
   getLostBids,
   createBid,
   updateBid,
+  deleteBid,
 };

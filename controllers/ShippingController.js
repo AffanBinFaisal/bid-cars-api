@@ -43,14 +43,11 @@ const createShipping = async (req, res) => {
 const updateShipping = async (req, res) => {
   const id = req.params.id; // Corrected the property name to access route parameters
   try {
-    const { active, status } = req.body;
+    const updatedData = req.body;
     const updatedShipping = await Shipping.findByIdAndUpdate(
       id,
       {
-        $set: {
-          active: active,
-          status: status,
-        },
+        $set: updatedData,
       },
       { new: true }
     );
@@ -58,6 +55,7 @@ const updateShipping = async (req, res) => {
     if (!updatedShipping) {
       return res.status(404).json({ error: "Shipping not found" });
     }
+
     res.status(200).end();
   } catch (error) {
     console.error("Error updating shipping:", error);
@@ -66,8 +64,9 @@ const updateShipping = async (req, res) => {
 };
 
 
+
 const deleteShipping = async (req, res) => {
-  const id = req.params.id; // Corrected the property name to access route parameters
+  const id = req.params.id;
   try {
     const deletedShipping = await Shipping.findByIdAndDelete(id);
 
