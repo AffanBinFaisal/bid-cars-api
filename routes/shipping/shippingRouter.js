@@ -10,6 +10,6 @@ router.get("/completed", authenticateToken,  ShippingController.getCompletedShip
 
 router.post("/", authenticateToken,  ShippingController.createShipping);
 
-router.post("/update/:id", authenticateToken, ShippingController.updateShipping);
+router.post("/update/:id", adminOnly , ShippingController.updateShipping);
 
 module.exports = router;

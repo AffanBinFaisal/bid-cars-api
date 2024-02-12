@@ -24,7 +24,7 @@ const getVehicleByVin = async (req, res) => {
 const getVehiclesByFilters = async (req, res) => {
   try {
     console.log(req.query);
-    const apiUrl = `https://copart-iaai-api.com/api/v2/get-cars`;
+    const apiUrl = `https://copart-iaai-api.com/api/v2/get-active-lots`;
     const response = await axios.post(apiUrl, {
       api_token: apiToken,
       page:1,
@@ -73,7 +73,7 @@ const getModelByMake = async (req, res) => {
 
 const getVehiclesType = async (req, res) => {
   try {
-    const apiUrl = "https://copart-iaai-api.com/api/v1/get-active-lots";
+    const apiUrl = "https://copart-iaai-api.com/api/v1/get-vehicles-type";
     const response = await axios.post(apiUrl, {
       api_token: apiToken,
     });
