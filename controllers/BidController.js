@@ -20,9 +20,26 @@ const fetchBids = async (req, res, resultFilter) => {
   }
 }
 
+const getBidById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const bid = await Bid.findById(id);
+
+    if (!bid) {
+      return res.status(404).json({ error: "Bid not found" });
+    }
+
+    res.status(200).json({ bid });
+  } catch (error) {
+    console.error(`Error fetching bid by ID: ${error}`);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
 const getCurrentBids = async (req, res) => {
   try {
-    const currentBids = await fetchBids(req, res, 1);
+    const currentBids = await fetchBids(req, res, true);
     res.status(200).json({ currentBids });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -31,7 +48,10 @@ const getCurrentBids = async (req, res) => {
 
 const getWonBids = async (req, res) => {
   try {
-    const wonBids = await fetchBids(req, res, 1);
+    const wonBids = await fetchBids(req, res, true);
+    if (!wonBids || wonBids.length === 0) {
+      return res.status(404).json({ error: "No won bids found" });
+    }
     res.status(200).json({ wonBids });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -40,8 +60,24 @@ const getWonBids = async (req, res) => {
 
 const getLostBids = async (req, res) => {
   try {
-    const lostBids = await fetchBids(req, res, 0);
+    const lostBids = await fetchBids(req, res, false);
+    if (!lostBids || lostBids.length === 0) {
+      return res.status(404).json({ error: "No lost bids found" });
+    }
     res.status(200).json({ lostBids });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+const getAllUserBids = async (req, res) => {
+  try {
+    const { email } = req.user;
+    const allBids = await Bid.find({ email: email });
+    if (!allBids || allBids.length === 0) {
+      return res.status(404).json({ error: "No bids found" });
+    }
+    res.status(200).json({ allBids });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -51,11 +87,9 @@ const createBid = async (req, res) => {
   try {
     const { email } = req.user;
 
-    // Fetch user details
     const user = await User.findOne({ email: email });
     const { balance } = user;
 
-    // Extract request body details
     const { vehicle, amount, merchant } = req.body;
 
     const existingBid = await Bid.findOne({ email: email, vehicle: vehicle });
@@ -65,7 +99,6 @@ const createBid = async (req, res) => {
 
     var requiredBiddingPower;
 
-    // Check bidding power based on the merchant
     if (merchant === "IAAI") {
       requiredBiddingPower = 1000;
       if (balance < requiredBiddingPower) {
@@ -83,7 +116,6 @@ const createBid = async (req, res) => {
       }
     }
 
-    // Create a new bid
     const bid = new Bid({
       email: email,
       vehicle: vehicle,
@@ -91,7 +123,6 @@ const createBid = async (req, res) => {
       requiredBiddingPower: requiredBiddingPower,
     });
 
-    // Save the bid to the database
     await bid.save();
 
     const updatedUser = await User.findOneAndUpdate(
@@ -101,7 +132,7 @@ const createBid = async (req, res) => {
           balance: -requiredBiddingPower,
         }
       },
-      { new: true } // to return the modified document
+      { new: true }
     );
 
     if (user) {
@@ -110,11 +141,9 @@ const createBid = async (req, res) => {
       console.log("User not found");
     }
 
-    // Send email notification
     sendBidMail(email, vehicle);
     sendBidConfirmationMail(email, vehicle);
 
-    // Respond with success
     res.status(200).end();
   } catch (error) {
     console.error("Error creating bid:", error);
@@ -132,44 +161,40 @@ const updateBid = async (req, res) => {
 
     const bid = await Bid.findById(id);
 
-    if (bid) {
-
-      if (bid.active) {
-
-        const { email, vehicle, requiredBiddingPower } = bid;
-
-        if (result == "true") {
-          sendBidWonMail(email, vehicle);
-        }
-        else {
-          const updatedUser = await User.findOneAndUpdate(
-            { email: email },
-            {
-              $inc: {
-                balance: requiredBiddingPower,
-              },
-            },
-            { new: true }
-          );
-
-          sendBidLostMail(email, vehicle);
-        }
-
-        bid.result = result;
-        bid.active = false;
-        await bid.save();
-
-        return res.status(200).json({ message: 'Bid updated successfully' });
-
-      } else {
-
-        return res.status(403).json({ message: 'Bid results have already been announced' });
-      }
-
-    } else {
+    if (!bid) {
       console.log('Bid not found');
       return res.status(404).json({ error: 'Bid not found' });
     }
+
+    if (!bid.active) {
+      return res.status(403).json({ message: 'Bid results have already been announced' });
+    }
+
+    const { email, vehicle, requiredBiddingPower } = bid;
+
+    if (result == "true") {
+      sendBidWonMail(email, vehicle);
+    }
+    else {
+      const updatedUser = await User.findOneAndUpdate(
+        { email: email },
+        {
+          $inc: {
+            balance: requiredBiddingPower,
+          },
+        },
+        { new: true }
+      );
+
+      sendBidLostMail(email, vehicle);
+    }
+
+    bid.result = result;
+    bid.active = false;
+    await bid.save();
+
+    return res.status(200).json({ message: 'Bid updated successfully' });
+
   } catch (error) {
     console.error('Error updating bid:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -205,9 +230,11 @@ const getAllBids = async (req, res) => {
 }
 
 module.exports = {
+  getBidById,
   getCurrentBids,
   getWonBids,
   getLostBids,
+  getAllUserBids,
   createBid,
   updateBid,
   deleteBid,

@@ -6,20 +6,24 @@ const authenticateToken = require("../../middlewares/authenticateToken");
 const adminOnly = require("../../middlewares/adminOnly");
 const bidController = require("../../controllers/bidController");
 
+router.get("/:id", authenticateToken, bidController.getBidById);
+
+router.get("/all", authenticateToken, bidController.getAllUserBids);
+
 router.get("/current", authenticateToken, bidController.getCurrentBids);
 
 router.get("/won", authenticateToken, bidController.getWonBids);
 
 router.get("/lost", authenticateToken, bidController.getLostBids);
 
-router.post("/", authenticateToken, bidController.createBid);
+router.post("/create", authenticateToken, bidController.createBid);
 
 // Admin
 
-router.get("/all", adminOnly, bidController.getAllBids);
+router.get("admin/all", adminOnly, bidController.getAllBids);
 
-router.post("/update", adminOnly, bidController.updateBid);
+router.post("admin/update", adminOnly, bidController.updateBid);
 
-router.delete("/delete", adminOnly, bidController.deleteBid);
+router.delete("admin/delete", adminOnly, bidController.deleteBid);
 
 module.exports = router;

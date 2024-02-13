@@ -27,7 +27,7 @@ app.use("/cars", carsRouter);
 app.use("/payments", paymentsRouter);
 app.use("/watchlist", watchlistRouter);
 app.use("/bids", bidsRouter);
-app.use("/shipping", shippingRouter);
+app.use("/shippings", shippingRouter);
 app.use("/purchase", purchaseRouter);
 
 const job = cron.schedule('0 0 * * 1-5', runPaymentReminder);
