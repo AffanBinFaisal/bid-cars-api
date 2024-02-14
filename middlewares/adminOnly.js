@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const secretKey = 'your-secret-key';
 
 const adminOnly = (req, res, next) => {
   const token = req.headers['authorization'];
@@ -11,7 +12,7 @@ const adminOnly = (req, res, next) => {
     if (err) {
       return res.status(403).json({ error: "Forbidden: Invalid token" });
     }
-    if(user.email=="affanfaisal442@gmail"){
+    if(user.email=="affanfaisal442@gmail.com"){
       req.user = user;
     }else{
       return res.status(403).json({error: "Forbidden: Insufficient previleges"});

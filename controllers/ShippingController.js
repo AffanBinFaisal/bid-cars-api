@@ -1,4 +1,4 @@
-const Shipping = require("../models/Shipping");
+const { Shipping } = require("../models/Shipping");
 
 const getShippingById = async (req, res) => {
   try {
@@ -58,7 +58,7 @@ const createShipping = async (req, res) => {
   const { email } = req.user;
   const { vehicle, status } = req.body;
   try {
-    const shipping = new Shipping({
+    const shipping = Shipping({
       email: email,
       vehicle: vehicle,
       status: status,
@@ -140,9 +140,9 @@ const getAllShippings = async (req, res) => {
 };
 
 const getAllUserShippings = async (req, res) => {
-  const {email} = req.user;
+  const { email } = req.user;
   try {
-    const shippings = await Shipping.find({email});
+    const shippings = await Shipping.find({ email });
 
     if (!shippings || shippings.length === 0) {
       return res.status(404).json({ error: "No shippings found" });

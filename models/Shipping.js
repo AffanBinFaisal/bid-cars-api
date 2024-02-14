@@ -1,5 +1,12 @@
 const mongoose = require("./mongoose/mongoose");
 
+const imageSchema = new mongoose.Schema({
+  filename: String,
+  path: String,
+});
+
+const Image = mongoose.model('Image', imageSchema);
+
 const shippingSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -14,8 +21,9 @@ const shippingSchema = new mongoose.Schema({
   active: {
     type: Boolean,
   },
+  images:[imageSchema]
 });
 
 const Shipping = mongoose.model('Shipping', shippingSchema);
 
-module.exports = Shipping;
+module.exports = {Image, Shipping};
