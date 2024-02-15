@@ -14,8 +14,9 @@ const loginUser = async (req, res) => {
     if (user) {
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (isPasswordValid) {
+        const { email, balance, verified } = user;
         const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
-        res.status(200).json({ token });
+        res.status(200).json({ token, email, balance, verified });
       } else {
         res.status(401).json({ error: "Incorrect email or password" });
       }
@@ -40,7 +41,7 @@ const registerUser = async (req, res) => {
       await user.save();
       const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
       sendVerificationMail(email, verificationToken);
-      res.status(200).json({ token });
+      res.status(200).json({ token, email });
     }
     else {
       res.status(409).json({ message: "User already exists" });
