@@ -4,7 +4,7 @@
 POST http://localhost:8001/auth/register
 Content-Type: application/x-www-form-urlencoded
 
-email=affanfaisal442@gmail.com&password=affan
+email=afaisal.bese21seecs@seecs.edu.pk&password=affan
 
 ### Login
 
@@ -22,7 +22,7 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2Fs
 
 POST http://localhost:8001/payments/deposit HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzY3MzA1NywiZXhwIjoxNzA3Njc2NjU3fQ.dy7JO-U6MV5jrtZgBKZ2v6CLOYDn-YXrq9Auc6t7T1g
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODA2Nzg2OCwiZXhwIjoxNzA4MDcxNDY4fQ.3kSgcLhUgo-7pWsuVLCoWl2fBaB68eJbEy5jow1xjes
 
 amount=20000&description=deposit
 
@@ -30,9 +30,9 @@ amount=20000&description=deposit
 
 POST http://localhost:8001/payments/withdraw HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzQ3OTc4NiwiZXhwIjoxNzA3NDgzMzg2fQ._ouUWQI_GJp5JrTprI0Vo0xM2T3avdh5XNjgAE2IVj8
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODA2Nzg2OCwiZXhwIjoxNzA4MDcxNDY4fQ.3kSgcLhUgo-7pWsuVLCoWl2fBaB68eJbEy5jow1xjes
 
-amount=2000
+amount=1000
 
 ### Bids
 
@@ -58,7 +58,6 @@ Content-Type: application/x-www-form-urlencoded
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwNzU2MDgwMiwiZXhwIjoxNzA3NTY0NDAyfQ.Zvw7MDlUAKXvpy94jOubycSMyLrjDw3qmbrzvYb9IFM
 
 vehicle=xyz
-
 
 ### Success
 

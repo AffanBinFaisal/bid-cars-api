@@ -61,8 +61,14 @@ const verifyToken = async (req, res) => {
       return res.status(404).json({ error: "Wrong Token" });
     }
 
+    if (user.verified) {
+      return res.status(400).json({ error: "User already verified" });
+    }
+
     user.verified = true;
     await user.save();
+
+    // const { email, verified, balance } = user;
 
     res.status(200).json({ message: "Email verification successful" });
   } catch (error) {
@@ -101,13 +107,15 @@ const resetPassword = async (req, res) => {
   const { newPassword } = req.body;
 
   try {
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    const email = decodedToken.email;
 
-    const user = await User.findOne({ email, verificationToken: token });
+    const user = await User.findOne({ verificationToken: token });
 
     if (!user) {
       return res.status(404).json({ error: 'Invalid token or user not found' });
+    }
+
+    if (!user.verified) {
+      return res.status(401).json({ error: 'User not verified' });
     }
 
     const salt = await bcrypt.genSalt(10);

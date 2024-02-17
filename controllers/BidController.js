@@ -23,7 +23,8 @@ const fetchBids = async (req, res, resultFilter) => {
 const getBidById = async (req, res) => {
   try {
     const { id } = req.params;
-    const bid = await Bid.findById(id);
+    const { email } = req.user;
+    const bid = await Bid.findOne({ _id: id, email: email });
 
     if (!bid) {
       return res.status(404).json({ error: "Bid not found" });
@@ -32,17 +33,21 @@ const getBidById = async (req, res) => {
     res.status(200).json({ bid });
   } catch (error) {
     console.error(`Error fetching bid by ID: ${error}`);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
 }
 
 
-const getCurrentBids = async (req, res) => {
+const getActiveBids = async (req, res) => {
   try {
     const currentBids = await fetchBids(req, res, true);
+    if (!currentBids || currentBids.length === 0) {
+      return res.status(404).json({ error: "No active bids found" });
+    }
     res.status(200).json({ currentBids });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(`Error fetching active bids: ${error}`);
+    res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
 }
 
@@ -54,7 +59,8 @@ const getWonBids = async (req, res) => {
     }
     res.status(200).json({ wonBids });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(`Error fetching won bids: ${error}`);
+    res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
 }
 
@@ -66,7 +72,8 @@ const getLostBids = async (req, res) => {
     }
     res.status(200).json({ lostBids });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(`Error fetching lost bids: ${error}`);
+    res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
 }
 
@@ -79,7 +86,8 @@ const getAllUserBids = async (req, res) => {
     }
     res.status(200).json({ allBids });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(`Error fetching all bids of user: ${error}`);
+    res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
 }
 
@@ -147,7 +155,7 @@ const createBid = async (req, res) => {
     res.status(200).end();
   } catch (error) {
     console.error("Error creating bid:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
 }
 
@@ -197,7 +205,7 @@ const updateBid = async (req, res) => {
 
   } catch (error) {
     console.error('Error updating bid:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
 }
 
@@ -210,10 +218,10 @@ const deleteBid = async (req, res) => {
       return res.status(404).json({ error: "Bid not found" });
     }
 
-    res.status(200).end();
+    res.status(200).json({ message: 'Bid deleted successfully' });
   } catch (error) {
     console.error("Error deleting bid:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
 };
 
@@ -221,17 +229,21 @@ const getAllBids = async (req, res) => {
   const filters = req.query;
   try {
     const bids = await Bid.find(filters);
+    if (!bids || bids.length === 0) {
+      return res.status(404).json({ error: "No bids found" });
+    }
+
     res.status(200).json({ bids });
   } catch (error) {
-    console.error("Error fetching bids:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching all bids:", error);
+    res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
 
 }
 
 module.exports = {
   getBidById,
-  getCurrentBids,
+  getActiveBids,
   getWonBids,
   getLostBids,
   getAllUserBids,

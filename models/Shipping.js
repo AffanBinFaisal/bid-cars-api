@@ -20,10 +20,11 @@ const shippingSchema = new mongoose.Schema({
   },
   active: {
     type: Boolean,
+    default: true,
   },
-  images:[imageSchema]
+  images: [imageSchema]
 });
 
 const Shipping = mongoose.model('Shipping', shippingSchema);
 
-module.exports = {Image, Shipping};
+module.exports = { Image, Shipping };

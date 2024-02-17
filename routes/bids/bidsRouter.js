@@ -10,7 +10,7 @@ router.get("/:id", authenticateToken, bidController.getBidById);
 
 router.get("/all", authenticateToken, bidController.getAllUserBids);
 
-router.get("/current", authenticateToken, bidController.getCurrentBids);
+router.get("/current", authenticateToken, bidController.getActiveBids);
 
 router.get("/won", authenticateToken, bidController.getWonBids);
 
