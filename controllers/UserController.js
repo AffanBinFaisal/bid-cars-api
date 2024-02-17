@@ -41,7 +41,7 @@ const registerUser = async (req, res) => {
       await user.save();
       const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
       sendVerificationMail(email, verificationToken);
-      res.status(200).json({ token, email, verified: false  });
+      res.status(200).json({ token, email, verified: false });
     }
     else {
       res.status(409).json({ message: "User already exists" });
@@ -102,6 +102,31 @@ const sendPasswordResetMail = async (req, res) => {
   }
 }
 
+const sendPasswordChangeMail = async (req, res) => {
+
+  const { email } = req.user;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const verificationToken = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
+
+    user.verificationToken = verificationToken;
+    await user.save();
+
+    sendResetPasswordMail(email, verificationToken);
+
+    res.status(200).json({ message: 'Password reset link sent to your email' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
 const resetPassword = async (req, res) => {
   const token = req.params.token;
   const { newPassword } = req.body;
@@ -136,5 +161,6 @@ module.exports = {
   registerUser,
   verifyToken,
   sendPasswordResetMail,
+  sendPasswordChangeMail,
   resetPassword,
 };

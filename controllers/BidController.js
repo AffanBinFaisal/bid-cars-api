@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const mongoose = require("../models/mongoose/mongoose");
+const mongoose = require("./../mongoose/mongoose");
 
 const Bid = require("../models/Bid");
 const User = require("../models/User");
