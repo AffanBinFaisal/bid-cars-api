@@ -41,7 +41,7 @@ const registerUser = async (req, res) => {
       await user.save();
       const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
       sendVerificationMail(email, verificationToken);
-      res.status(200).json({ token, email });
+      res.status(200).json({ token, email, verified: false  });
     }
     else {
       res.status(409).json({ message: "User already exists" });
