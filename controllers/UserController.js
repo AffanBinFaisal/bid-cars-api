@@ -9,9 +9,9 @@ const secretKey = process.env.JWT_SECRET;
 
 const loginUser = async (req, res) => {
   try {
-    const { enteredEmail, enteredPassword } = req.body;
+    const { email: enteredEmail, password: enteredPassword } = req.body;
     const user = await User.findOne({ email: enteredEmail });
-
+    console.log(user);
     if (!user) {
       return res.status(401).json({ error: "User not found" });
     }
@@ -19,7 +19,7 @@ const loginUser = async (req, res) => {
     const isPasswordValid = await bcrypt.compare(enteredPassword, user.password);
 
     if (!isPasswordValid) {
-      res.status(401).json({ error: "Incorrect email or password" });
+      return res.status(401).json({ error: "Incorrect email or password" });
     }
 
     const { email, balance, verified } = user;
@@ -52,7 +52,7 @@ const registerUser = async (req, res) => {
   await user.save();
   const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
   sendVerificationMail(email, verificationToken);
-  res.status(200).json({ token, email, verified: false });
+  res.status(200).json({ token, email, balance:0, verified: false });
 }
 
 const verifyToken = async (req, res) => {
@@ -72,9 +72,9 @@ const verifyToken = async (req, res) => {
     user.verified = true;
     await user.save();
 
-    // const { email, verified, balance } = user;
+    const { email, verified, balance } = user;
 
-    res.status(200).json({ message: "Email verification successful" });
+    res.status(200).json({ message: "Email verification successful", email, verified, balance });
   } catch (error) {
     console.error("Error during email verification:", error);
     res.status(500).json({ error: "Internal Server Error" });

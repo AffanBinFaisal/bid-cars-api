@@ -16,7 +16,7 @@ const createCheckoutSession = async (amount, description, email) => {
           product_data: {
             name: description,
           },
-          unit_amount: amount,
+          unit_amount: amount*100,
         },
         quantity: 1,
       }],

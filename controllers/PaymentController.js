@@ -18,10 +18,8 @@ const getSessionUrl = async (req, res) => {
     const { email } = req.user;
     const { amount, description } = req.body;
     const session = await createCheckoutSession(amount, description, email);
-    const sessionUrl = session.url;
-    const sessionId = session.id;
+    const { url: sessionUrl, id: sessionId } = session;
     const currentSession = await Session.findOne({ email: email });
-
     if (!currentSession) {
       const newSession = Session(
         {
@@ -32,10 +30,14 @@ const getSessionUrl = async (req, res) => {
       );
       await newSession.save();
     } else {
-      const canceledSession = await stripe.checkout.sessions.expire(currentSession.sessionId);
+      const currentRetrievedSession = await stripe.checkout.sessions.retrieve(currentSession.sessionId);
+      if (currentRetrievedSession.status == "open") {
+        const canceledSession = await stripe.checkout.sessions.expire(currentSession.sessionId);
+      }
       currentSession.sessionId = sessionId;
       currentSession.sessionUrl = sessionUrl;
       await currentSession.save();
+
     }
 
     res.status(200).json({ sessionUrl });
@@ -46,7 +48,7 @@ const getSessionUrl = async (req, res) => {
 
 const withdrawAmount = async (req, res) => {
   try {
-    const {email} = req.user;
+    const { email } = req.user;
     const { amount } = req.body;
 
     const user = await User.findOne({ email: email });
@@ -119,7 +121,7 @@ const processPayment = async (req, res) => {
     if (session.payment_status === 'paid') {
 
       const paymentIntentId = session.payment_intent;
-      const amount = session.amount_total;
+      const amount = session.amount_total / 100;
 
       const transaction = new Transaction({
         email: email,
@@ -151,7 +153,7 @@ const processPayment = async (req, res) => {
       }
 
       const deletedSession = await Session.deleteOne({ email: email });
-       
+
       sendCashDepositMail(email, amount);
 
       res.status(200).json({ message: "Payment successfull" });
