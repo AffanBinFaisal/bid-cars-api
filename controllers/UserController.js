@@ -9,20 +9,23 @@ const secretKey = process.env.JWT_SECRET;
 
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email: email });
-    if (user) {
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (isPasswordValid) {
-        const { email, balance, verified } = user;
-        const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
-        res.status(200).json({ token, email, balance, verified });
-      } else {
-        res.status(401).json({ error: "Incorrect email or password" });
-      }
-    } else {
-      res.status(401).json({ error: "User not found" });
+    const { enteredEmail, enteredPassword } = req.body;
+    const user = await User.findOne({ email: enteredEmail });
+
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
     }
+
+    const isPasswordValid = await bcrypt.compare(enteredPassword, user.password);
+
+    if (!isPasswordValid) {
+      res.status(401).json({ error: "Incorrect email or password" });
+    }
+
+    const { email, balance, verified } = user;
+    const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
+    res.status(200).json({ token, email, balance, verified });
+
   } catch (error) {
     console.error('Error during authentication:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -31,24 +34,25 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
   const { email, password } = req.body;
-  if (email && password) {
-    const existingUser = await User.findOne({ email: email });
-    if (!existingUser) {
-      const verificationToken = Buffer.from(`${email}:${secretKey}`).toString('base64');
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      const user = User({ email: email, password: hashedPassword, verificationToken: verificationToken });
-      await user.save();
-      const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
-      sendVerificationMail(email, verificationToken);
-      res.status(200).json({ token, email, verified: false });
-    }
-    else {
-      res.status(409).json({ message: "User already exists" });
-    }
-  } else {
-    res.status(400).json({ message: "Please fill both email and password" });
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Please fill both email and password" });
   }
+
+  const existingUser = await User.findOne({ email: email });
+
+  if (existingUser) {
+    return res.status(409).json({ message: "User already exists" });
+  }
+
+  const verificationToken = Buffer.from(`${email}:${secretKey}`).toString('base64');
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  const user = User({ email: email, password: hashedPassword, verificationToken: verificationToken });
+  await user.save();
+  const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
+  sendVerificationMail(email, verificationToken);
+  res.status(200).json({ token, email, verified: false });
 }
 
 const verifyToken = async (req, res) => {

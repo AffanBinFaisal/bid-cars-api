@@ -19,6 +19,7 @@ const addImages = async (req, res) => {
     await existingShipping.save();
 
     res.status(200).json({ message: 'Images added to Shipping record successfully' });
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });

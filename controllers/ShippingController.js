@@ -57,6 +57,11 @@ const getCompletedShippings = async (req, res) => {
 const createShipping = async (req, res) => {
   const { email } = req.user;
   const { vehicle, status } = req.body;
+
+  if (!vehicle || !status) {
+    return res.status(400).json({ error: "Invalid Inputs" });
+  }
+
   try {
     const shipping = Shipping({
       email: email,
@@ -66,6 +71,7 @@ const createShipping = async (req, res) => {
     });
     await shipping.save();
     res.status(200).end();
+
   } catch (error) {
     console.error("Error creating shipping:", error);
     res.status(500).json({ error: "Internal Server Error" });

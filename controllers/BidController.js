@@ -11,7 +11,6 @@ const sendBidLostMail = require("../utils/mails/bids/sendBidLostMail");
 
 const fetchBids = async (req, res, resultFilter) => {
   try {
-    const { email } = req.user;
     const bids = await Bid.find({ email: email, result: resultFilter });
     return bids;
   } catch (error) {
@@ -94,13 +93,18 @@ const getAllUserBids = async (req, res) => {
 const createBid = async (req, res) => {
   try {
     const { email } = req.user;
+    const { vehicle, amount, merchant } = req.body;
+
+    if (vehicle == null || amount == null || merchant == null) {
+      return res.status(400).json({ error: "Invalid inputs" });
+    }
+
 
     const user = await User.findOne({ email: email });
     const { balance } = user;
 
-    const { vehicle, amount, merchant } = req.body;
-
     const existingBid = await Bid.findOne({ email: email, vehicle: vehicle });
+    
     if (existingBid) {
       return res.status(400).json({ error: "Bid already exists" });
     }
