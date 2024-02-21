@@ -30,9 +30,9 @@ amount=2000&description=deposit
 
 POST http://localhost:8001/payments/withdraw HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODE3MjM3MywiZXhwIjoxNzA4MTc1OTczfQ.K1_ig3iw39fdejjxRRmZIVjwxcMwfs_kQxXWvMxHQoQ
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODQ1Mjg4NiwiZXhwIjoxNzA4NDU2NDg2fQ.bOMJVpIQC-_BxKT6F8vAdb99qBWAIcbjq2A6dwfWlMw
 
-amount=20000
+amount=2000
 
 ### Bids
 

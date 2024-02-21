@@ -74,7 +74,7 @@ const verifyToken = async (req, res) => {
 
     const { email, verified, balance } = user;
 
-    res.status(200).json({ message: "Email verification successful", email, verified, balance });
+    res.status(200).json({ message: "Email verification successful", });
   } catch (error) {
     console.error("Error during email verification:", error);
     res.status(500).json({ error: "Internal Server Error" });
