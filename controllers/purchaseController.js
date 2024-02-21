@@ -71,7 +71,7 @@ const buyNowCar = async (req, res) => {
     }
 
     if (user.balance <= amount) {
-      res.status(400).json({
+      return res.status(400).json({
         error: "Insufficient balance",
       });
     }

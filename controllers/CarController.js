@@ -28,6 +28,9 @@ const getVehiclesByFilters = async (req, res) => {
     for (const key in req.query) {
       const value = req.query[key];
 
+      if (value == "All") {
+        value = "";
+      }
       if (value !== null && value !== undefined && value !== '') {
         const underscoreKey = key.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
         filters[underscoreKey] = value.toUpperCase();
