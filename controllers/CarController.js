@@ -26,7 +26,7 @@ const getVehiclesByFilters = async (req, res) => {
 
   try {
     for (const key in req.query) {
-      const value = req.query[key];
+      var value = req.query[key];
 
       if (value == "All") {
         value = "";
