@@ -1,24 +1,23 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const serverUrl = process.env.SERVER_URL;
 
 const sendVerificationMail = (recipient, verificationToken) => {
-
-  const verificationLink = `${serverUrl}/auth/verify/${verificationToken}`;
+  const verificationLink = `http://localhost:3000/verified/${verificationToken}`;
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
       user: process.env.USER,
       pass: process.env.PASS,
-    }
+    },
   });
 
   const mailOptions = {
     from: process.env.USER,
     to: recipient,
-    subject: 'Welcome to Bid-Cars - Verify Your Email',
+    subject: "Welcome to Bid-Cars - Verify Your Email",
     html: `
       <html>
         <body style="font-family: 'Arial', sans-serif; margin: 20px; padding: 20px; background-color: #f4f4f4;">
@@ -42,11 +41,11 @@ const sendVerificationMail = (recipient, verificationToken) => {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
     } else {
-      console.log('Email sent:', info.response);
+      console.log("Email sent:", info.response);
     }
   });
-}
+};
 
 module.exports = sendVerificationMail;

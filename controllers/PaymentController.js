@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripe = require("stripe")(stripeSecretKey);
@@ -17,34 +17,36 @@ const getSessionUrl = async (req, res) => {
   try {
     const { email } = req.user;
     const { amount, description } = req.body;
+    console.log(amount, description);
     const session = await createCheckoutSession(amount, description, email);
     const { url: sessionUrl, id: sessionId } = session;
     const currentSession = await Session.findOne({ email: email });
     if (!currentSession) {
-      const newSession = Session(
-        {
-          email: email,
-          sessionId: sessionId,
-          sessionUrl: sessionUrl,
-        }
-      );
+      const newSession = Session({
+        email: email,
+        sessionId: sessionId,
+        sessionUrl: sessionUrl,
+      });
       await newSession.save();
     } else {
-      const currentRetrievedSession = await stripe.checkout.sessions.retrieve(currentSession.sessionId);
+      const currentRetrievedSession = await stripe.checkout.sessions.retrieve(
+        currentSession.sessionId
+      );
       if (currentRetrievedSession.status == "open") {
-        const canceledSession = await stripe.checkout.sessions.expire(currentSession.sessionId);
+        const canceledSession = await stripe.checkout.sessions.expire(
+          currentSession.sessionId
+        );
       }
       currentSession.sessionId = sessionId;
       currentSession.sessionUrl = sessionUrl;
       await currentSession.save();
-
     }
 
     res.status(200).json({ sessionUrl });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
 
 const withdrawAmount = async (req, res) => {
   try {
@@ -73,7 +75,9 @@ const withdrawAmount = async (req, res) => {
           const refund = await refundAmount(paymentIntentId, remainingAmount);
         } catch (refundError) {
           console.log(refundError);
-          res.status(500).json({ error: `Internal Server Error: ${refundError.message}` });
+          res
+            .status(500)
+            .json({ error: `Internal Server Error: ${refundError.message}` });
           return;
         }
 
@@ -86,7 +90,9 @@ const withdrawAmount = async (req, res) => {
           const refund = await refundAmount(paymentIntentId, balance);
         } catch (refundError) {
           console.log(refundError);
-          res.status(500).json({ error: `Internal Server Error: ${refundError.message}` });
+          res
+            .status(500)
+            .json({ error: `Internal Server Error: ${refundError.message}` });
           return;
         }
 
@@ -102,13 +108,14 @@ const withdrawAmount = async (req, res) => {
 
     sendCashWithdrawalMail(email, amount);
 
-    res.status(200).json({ message: `You have successfully withdrawn $${amount}` });
-
+    res
+      .status(200)
+      .json({ message: `You have successfully withdrawn $${amount}` });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: `Internal Server Error: ${error.message}` });
   }
-}
+};
 
 const processPayment = async (req, res) => {
   try {
@@ -118,30 +125,29 @@ const processPayment = async (req, res) => {
 
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-    if (session.payment_status === 'paid') {
-
+    if (session.payment_status === "paid") {
       const paymentIntentId = session.payment_intent;
       const amount = session.amount_total / 100;
 
       const transaction = new Transaction({
         email: email,
         amount: amount,
-        currency: 'usd',
+        currency: "usd",
         paymentIntentId: paymentIntentId,
         balance: amount,
       });
 
       await transaction.save();
 
-      console.log('Transaction saved to database:', transaction);
+      console.log("Transaction saved to database:", transaction);
 
       const user = await User.findOneAndUpdate(
         { email: email },
         {
           $inc: {
             balance: amount,
-            deposit: amount
-          }
+            deposit: amount,
+          },
         },
         { new: true }
       );
@@ -160,15 +166,13 @@ const processPayment = async (req, res) => {
     } else {
       res.status(403).json({ error: "Payment not made" });
     }
-
   } catch (error) {
-    console.error('Error handling successful payment:', error.message);
+    console.error("Error handling successful payment:", error.message);
     res.status(500).json({ error: error.message });
   }
-}
+};
 
 const getTransactions = async (req, res) => {
-
   const { email } = req.user;
 
   try {
@@ -183,11 +187,11 @@ const getTransactions = async (req, res) => {
     console.error("Error fetching transactions:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 module.exports = {
   getSessionUrl,
   withdrawAmount,
   processPayment,
   getTransactions,
-}
+};

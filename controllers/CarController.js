@@ -1,5 +1,5 @@
 const axios = require("axios");
-require('dotenv').config();
+require("dotenv").config();
 
 const apiToken = process.env.API_TOKEN;
 
@@ -19,17 +19,19 @@ const getVehicleByVin = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
 const getVehiclesByFilters = async (req, res) => {
-  const filters = { page: 1, per_page: 20, };
+  const filters = { page: 1, per_page: 20 };
 
   try {
     for (const key in req.query) {
       const value = req.query[key];
 
-      if (value !== null && value !== undefined && value !== '') {
-        const underscoreKey = key.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+      if (value !== null && value !== undefined && value !== "") {
+        const underscoreKey = key
+          .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
+          .toLowerCase();
         filters[underscoreKey] = value.toUpperCase();
       }
     }
@@ -37,16 +39,16 @@ const getVehiclesByFilters = async (req, res) => {
     const apiUrl = `https://copart-iaai-api.com/api/v2/get-active-lots`;
     const response = await axios.post(apiUrl, {
       api_token: apiToken,
-      ...filters
+      ...filters,
     });
 
     const data = response.data;
     res.status(200).json(data);
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error("Error fetching data:", error);
     res.status(500).json({ error: `Internal Server Error: ${error}` });
   }
-}
+};
 
 const getMakes = async (req, res) => {
   try {
@@ -56,12 +58,11 @@ const getMakes = async (req, res) => {
     });
     const data = response.data;
     res.status(200).json(data);
-
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 const getModelByMake = async (req, res) => {
   const { id } = req.params;
@@ -72,12 +73,11 @@ const getModelByMake = async (req, res) => {
     });
     const data = response.data;
     res.status(200).json(data);
-
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 const getVehiclesType = async (req, res) => {
   try {
@@ -87,17 +87,16 @@ const getVehiclesType = async (req, res) => {
     });
     const data = response.data;
     res.status(200).json(data);
-
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 module.exports = {
   getVehicleByVin,
   getVehiclesByFilters,
   getMakes,
   getVehiclesType,
-  getModelByMake
+  getModelByMake,
 };
