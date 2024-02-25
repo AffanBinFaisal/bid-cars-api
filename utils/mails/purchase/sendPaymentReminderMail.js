@@ -6,7 +6,7 @@ const sendPaymentReminderMail = (email, vehicle, daysLeft) => {
   const mailOptions = {
     from: process.env.USER,
     to: email,
-    subject: 'New Bid Notification from Bid-Cars',
+    subject: 'Payment Reminder from Bid-Cars',
     html: `
     <html>
       <body style="font-family: Arial, sans-serif; margin: 20px; color: #333;">

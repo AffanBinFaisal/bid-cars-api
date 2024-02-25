@@ -1,10 +1,10 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-const serverUrl = process.env.SERVER_URL;
+const websiteUrl = process.env.WEBSITE_URL;
 
 const sendVerificationMail = (recipient, verificationToken) => {
-  const verificationLink = `http://localhost:3000/verified/${verificationToken}`;
+  const verificationLink = `${websiteUrl}/verified/${verificationToken}`;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
