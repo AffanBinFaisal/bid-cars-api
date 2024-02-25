@@ -81,3 +81,13 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2Fs
 ### Cars
 
 GET http://localhost:8001/cars/?make=Toyota&yearsFrom= HTTP/1.1
+
+### Get Destinations
+
+GET http://localhost:8001/calculations/destinations HTTP/1.1
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODY4MTU2OSwiZXhwIjoxNzA4Njg1MTY5fQ.3REiH4l0xcCnJXW6L1DnqDP15oDhLfQUqLjuGiyfBik
+
+### Calculate
+
+GET http://localhost:8001/calculations/calculate?price=5000&type=iaai&auctionName=Abilene%2079601&terminal=savannah&destination=klaipeda HTTP/1.1
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODY4MTU2OSwiZXhwIjoxNzA4Njg1MTY5fQ.3REiH4l0xcCnJXW6L1DnqDP15oDhLfQUqLjuGiyfBik

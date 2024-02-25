@@ -8,6 +8,10 @@ const watchlistSchema = new mongoose.Schema({
   vehicle: {
     type: String,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Watchlist = mongoose.model('Watchlist', watchlistSchema);

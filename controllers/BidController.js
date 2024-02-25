@@ -93,7 +93,7 @@ const getAllUserBids = async (req, res) => {
 const createBid = async (req, res) => {
   try {
     const { email } = req.user;
-    const { vehicle, amount, totalCost, merchant } = req.body;
+    const { vehicle, amount, merchant } = req.body;
 
     if (vehicle == null || amount == null || merchant == null) {
       return res.status(400).json({ error: "Invalid inputs" });
@@ -131,7 +131,6 @@ const createBid = async (req, res) => {
       email: email,
       vehicle: vehicle,
       amount: amount,
-      totalCost: totalCost,
       requiredBiddingPower: requiredBiddingPower,
     });
 

@@ -15,6 +15,7 @@ const shippingRouter = require("./routes/shipping/shippingRouter");
 const paymentsRouter = require("./routes/payments/paymentsRouter");
 const purchaseRouter = require("./routes/purchase/purchaseRouter");
 const imageRouter = require("./routes/image/imageRouter");
+const calculcationsRouter = require("./routes/calculations/calculationsRouter");
 
 const app = express();
 const port = process.env.PORT;
@@ -35,6 +36,7 @@ app.use("/bids", bidsRouter);
 app.use("/shippings", shippingRouter);
 app.use("/purchase", purchaseRouter);
 app.use("/images", imageRouter);
+app.use("/calculations", calculcationsRouter);
 
 const job = cron.schedule('0 0 * * 1-5', runPaymentReminder);
 
