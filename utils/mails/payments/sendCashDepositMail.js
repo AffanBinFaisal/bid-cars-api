@@ -1,8 +1,10 @@
-const nodemailer = require("nodemailer");
+// Importing the email transporter for sending emails
 const transporter = require("../transporter/transporter");
 
+// Function to send a cash deposit confirmation email
 const sendCashDepositMail = (email, amount) => {
 
+  // Configuring the email options with HTML content
   const mailOptions = {
     from: process.env.USER,
     to: email,
@@ -27,7 +29,9 @@ const sendCashDepositMail = (email, amount) => {
     `,
   };
 
+  // Sending the email using the configured transporter
   transporter.sendMail(mailOptions, (error, info) => {
+    // Logging any errors or the success response
     if (error) {
       console.error('Error sending email:', error);
     } else {
@@ -36,4 +40,5 @@ const sendCashDepositMail = (email, amount) => {
   });
 }
 
+// Exporting the function for use in other parts of the application
 module.exports = sendCashDepositMail;

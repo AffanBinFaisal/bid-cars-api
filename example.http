@@ -89,9 +89,17 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2Fs
 
 ### Calculate
 
-GET http://localhost:8001/calculations/calculate?price=5000&type=iaai&auctionName=Abilene%2079601&terminal=savannah&destination=klaipeda HTTP/1.1
+GET http://localhost:8001/calculations/calculate-old?price=5000&type=iaai&auctionName=Abilene%2079601&terminal=savannah&destination=klaipeda HTTP/1.1
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODY4MTU2OSwiZXhwIjoxNzA4Njg1MTY5fQ.3REiH4l0xcCnJXW6L1DnqDP15oDhLfQUqLjuGiyfBik
 
 ### 
-GET http://localhost:8001/calculations/calculate-total?price=5000&destination=klaipeda&vin=5UX43DP00P9T00101 HTTP/1.1
+GET http://localhost:8001/calculations/calculate-new?price=5000&destination=klaipeda&vin=5UX43DP00P9T00101 HTTP/1.1
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODY4MTU2OSwiZXhwIjoxNzA4Njg1MTY5fQ.3REiH4l0xcCnJXW6L1DnqDP15oDhLfQUqLjuGiyfBik
+
+### 
+GET http://localhost:8001/cars/vin/5UXKR0C52G0P21189 HTTP/1.1
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODY4MTU2OSwiZXhwIjoxNzA4Njg1MTY5fQ.3REiH4l0xcCnJXW6L1DnqDP15oDhLfQUqLjuGiyfBik
+
+### 
+GET http://localhost:8001/cars/ HTTP/1.1
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFmZmFuZmFpc2FsNDQyQGdtYWlsLmNvbSIsImlhdCI6MTcwODY4MTU2OSwiZXhwIjoxNzA4Njg1MTY5fQ.3REiH4l0xcCnJXW6L1DnqDP15oDhLfQUqLjuGiyfBik
