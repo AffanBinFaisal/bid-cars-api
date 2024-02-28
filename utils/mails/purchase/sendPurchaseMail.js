@@ -1,12 +1,13 @@
-const nodemailer = require("nodemailer");
+// Importing the email transporter for sending emails
 const transporter = require("../transporter/transporter");
 
+// Function to send a purchase confirmation email
 const sendPurchaseMail = (email, vehicle) => {
-
+  // Configuring the email options with HTML content
   const mailOptions = {
-    from: process.env.USER,
-    to: email,
-    subject: 'Car Purchase Notification from Bid-Cars',
+    from: process.env.USER, // Sender email
+    to: email, // Recipient email
+    subject: 'Car Purchase Notification from Bid-Cars', // Email subject
     html: `
     <html>
       <body style="font-family: Arial, sans-serif; margin: 20px; color: #333;">
@@ -23,11 +24,13 @@ const sendPurchaseMail = (email, vehicle) => {
           <p style="color: #888; font-size: 12px;">This is an automated confirmation. Please do not reply to this email.</p>
         </div>
       </body>
-  </html>
+    </html>
     `,
   };
 
+  // Sending the email using the configured transporter
   transporter.sendMail(mailOptions, (error, info) => {
+    // Logging any errors or the success response
     if (error) {
       console.error('Error sending email:', error);
     } else {
@@ -36,4 +39,5 @@ const sendPurchaseMail = (email, vehicle) => {
   });
 }
 
+// Exporting the function for use in other parts of the application
 module.exports = sendPurchaseMail;

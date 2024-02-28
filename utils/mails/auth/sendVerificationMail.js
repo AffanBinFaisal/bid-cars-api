@@ -1,19 +1,18 @@
-const nodemailer = require("nodemailer");
+// Loading environment variables from a .env file
 require("dotenv").config();
 
+// Importing the email transporter for sending emails
+const transporter = require("../transporter/transporter");
+
+// Extracting necessary environment variables
 const websiteUrl = process.env.WEBSITE_URL;
 
+// Function to send a verification email
 const sendVerificationMail = (recipient, verificationToken) => {
+  // Creating the verification link using the verification token
   const verificationLink = `${websiteUrl}/verified/${verificationToken}`;
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.USER,
-      pass: process.env.PASS,
-    },
-  });
-
+  // Configuring the email options with HTML content
   const mailOptions = {
     from: process.env.USER,
     to: recipient,
@@ -39,7 +38,9 @@ const sendVerificationMail = (recipient, verificationToken) => {
     `,
   };
 
+  // Sending the email using the configured transporter
   transporter.sendMail(mailOptions, (error, info) => {
+    // Logging any errors or the success response
     if (error) {
       console.error("Error sending email:", error);
     } else {
@@ -48,4 +49,5 @@ const sendVerificationMail = (recipient, verificationToken) => {
   });
 };
 
+// Exporting the function for use in other parts of the application
 module.exports = sendVerificationMail;

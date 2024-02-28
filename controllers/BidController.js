@@ -164,7 +164,8 @@ const createBid = async (req, res) => {
 
 const updateBid = async (req, res) => {
   try {
-    const { id, result } = req.body;
+    const { id } = req.params;
+    const { result } = req.body;
 
     if (!mongoose.isValidObjectId(id)) {
       return res.status(400).json({ error: 'Invalid ObjectId' });

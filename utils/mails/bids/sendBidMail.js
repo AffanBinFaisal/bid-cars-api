@@ -1,8 +1,10 @@
-const nodemailer = require("nodemailer");
+// Importing the email transporter for sending emails
 const transporter = require("../transporter/transporter");
 
+// Function to send a bid notification email to the admin
 const sendBidMail = (email, vehicle) => {
 
+  // Configuring the email options with HTML content
   const mailOptions = {
     from: process.env.USER,
     to: process.env.RECIPIENT,
@@ -28,7 +30,9 @@ const sendBidMail = (email, vehicle) => {
     `,
   };
 
+  // Sending the email using the configured transporter
   transporter.sendMail(mailOptions, (error, info) => {
+    // Logging any errors or the success response
     if (error) {
       console.error('Error sending email:', error);
     } else {
@@ -37,4 +41,5 @@ const sendBidMail = (email, vehicle) => {
   });
 }
 
+// Exporting the function for use in other parts of the application
 module.exports = sendBidMail;
