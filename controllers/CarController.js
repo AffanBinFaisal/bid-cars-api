@@ -22,7 +22,7 @@ const getVehicleByVin = async (req, res) => {
 };
 
 const getVehiclesByFilters = async (req, res) => {
-  const filters = { page: 1, per_page: 20 };
+  const filters = { page: 1, per_page: 50 };
 
   try {
     for (const key in req.query) {

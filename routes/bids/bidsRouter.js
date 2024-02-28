@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-require('dotenv').config();
+require("dotenv").config();
 
 const authenticateToken = require("../../middlewares/authenticateToken");
 const adminOnly = require("../../middlewares/adminOnly");

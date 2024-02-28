@@ -70,7 +70,7 @@ const withdrawAmount = async (req, res) => {
     for (const transaction of transactions) {
       const { paymentIntentId, balance } = transaction;
 
-      if (transaction.balance >= remainingAmount) {
+      if (transaction.balance > remainingAmount) {
         try {
           const refund = await refundAmount(paymentIntentId, remainingAmount);
         } catch (refundError) {
@@ -108,9 +108,10 @@ const withdrawAmount = async (req, res) => {
 
     sendCashWithdrawalMail(email, amount);
 
-    res
-      .status(200)
-      .json({ message: `You have successfully withdrawn $${amount}` });
+    res.status(200).json({
+      amount: amount,
+      message: `You have successfully withdrawn $${amount}`,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: `Internal Server Error: ${error.message}` });
@@ -162,7 +163,7 @@ const processPayment = async (req, res) => {
 
       sendCashDepositMail(email, amount);
 
-      res.status(200).json({ message: "Payment successfull" });
+      res.status(200).json({ amount: amount, message: "Payment successfull" });
     } else {
       res.status(403).json({ error: "Payment not made" });
     }
