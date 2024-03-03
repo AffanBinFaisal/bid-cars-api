@@ -1,12 +1,14 @@
-const nodemailer = require("nodemailer");
+// Importing the email transporter for sending emails
 const transporter = require("../transporter/transporter");
 
+// Function to send a cash withdrawal confirmation email
 const sendCashWithdrawalMail = (email, amount) => {
 
+  // Configuring the email options with HTML content
   const mailOptions = {
     from: process.env.USER,
     to: email,
-    subject: 'New Bid Notification from Bid-Cars',
+    subject: 'Cash Withdrawal Notification from Bid-Cars',
     html: `
     <html>
       <body style="font-family: Arial, sans-serif; margin: 20px; color: #333;">
@@ -27,7 +29,9 @@ const sendCashWithdrawalMail = (email, amount) => {
     `,
   };
 
+  // Sending the email using the configured transporter
   transporter.sendMail(mailOptions, (error, info) => {
+    // Logging any errors or the success response
     if (error) {
       console.error('Error sending email:', error);
     } else {
@@ -36,4 +40,5 @@ const sendCashWithdrawalMail = (email, amount) => {
   });
 }
 
+// Exporting the function for use in other parts of the application
 module.exports = sendCashWithdrawalMail;

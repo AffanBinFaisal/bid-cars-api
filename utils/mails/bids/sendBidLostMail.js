@@ -1,8 +1,13 @@
+// Importing nodemailer for sending emails
 const nodemailer = require("nodemailer");
+
+// Importing the email transporter for sending emails
 const transporter = require("../transporter/transporter");
 
+// Function to send a bid result notification email (when bid is lost)
 const sendBidLostMail = (email, vehicle) => {
 
+  // Configuring the email options with HTML content
   const mailOptions = {
     from: process.env.USER,
     to: email,
@@ -23,11 +28,13 @@ const sendBidLostMail = (email, vehicle) => {
           <p style="color: #888; font-size: 12px;">This is an automated notification. Please do not reply to this email.</p>
         </div>
       </body>
-  </html>  
+    </html>  
     `,
   };
 
+  // Sending the email using the configured transporter
   transporter.sendMail(mailOptions, (error, info) => {
+    // Logging any errors or the success response
     if (error) {
       console.error('Error sending email:', error);
     } else {
@@ -36,4 +43,5 @@ const sendBidLostMail = (email, vehicle) => {
   });
 }
 
+// Exporting the function for use in other parts of the application
 module.exports = sendBidLostMail;

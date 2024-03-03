@@ -15,14 +15,81 @@ const shippingSchema = new mongoose.Schema({
   vehicle: {
     type: String,
   },
+  vin: {
+    type: String
+  },
   status: {
     type: String,
   },
+  
   active: {
     type: Boolean,
-    default: true,
+    default: false,
   },
-  images: [imageSchema]
+  inProgress: {
+    type: Boolean,
+    default: false,
+  },
+  completed: {
+    type: Boolean,
+    default: false,
+  },
+
+  images: [imageSchema],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+
+  // Sale Origin
+  saleOrigin: {
+    type: String,
+  },
+
+  // Delivery to Branch
+  receivingBranch: {
+    type: String,
+  },
+
+  // Shipping
+  finalDestination: {
+    type: String,
+  },
+  shippingLine: {
+    type: String,
+  },
+  vesselName: {
+    type: String,
+  },
+  containerNo: {
+    type: String,
+  },
+
+  // Inspection Information
+  keys: {
+    type: Boolean,
+  },
+  color: {
+    type: String,
+  },
+  new: {
+    type: Boolean,
+  },
+  damage: {
+    type: Boolean,
+  },
+  running: {
+    type: Boolean,
+  },
+  wheels: {
+    type: Boolean,
+  },
+  airbag: {
+    type: Boolean,
+  },
+  radio: {
+    type: Boolean,
+  },
 });
 
 const Shipping = mongoose.model('Shipping', shippingSchema);

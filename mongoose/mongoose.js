@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
 
-//mongodb+srv://bidcars:<password>@bid-cars.c3tcxer.mongodb.net/?retryWrites=true&w=majority
-
+// MongoDB connection details
 const username = 'bidcars';
 const password = 'bidcars';
 const host = 'bid-cars.c3tcxer.mongodb.net';
 
+// Constructing the MongoDB connection string
 const connectionString = `mongodb+srv://${username}:${password}@${host}/?retryWrites=true&w=majority`;
 
 // Connect to the MongoDB database
 mongoose.connect(connectionString);
 
+// Access the default connection
 const db = mongoose.connection;
 
 // Event listeners for successful and failed connections

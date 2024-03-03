@@ -29,7 +29,11 @@ const bidSchema = new mongoose.Schema({
   },
   daysLeft: {
     type: Number,
-  }
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Bid = mongoose.model('Bid', bidSchema);

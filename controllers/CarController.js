@@ -1,28 +1,45 @@
 const axios = require("axios");
 require("dotenv").config();
 
-const apiToken = process.env.API_TOKEN;
+const API_TOKEN = process.env.API_TOKEN;
+const API_BASE_URL = process.env.API_BASE_URL;
+
+const handleRequestError = (error, res) => {
+  console.error("Error fetching cars:", error);
+  res.status(500).json({ error: `Internal Server Error: ${error}` });
+};
+
+const fetchData = async (apiUrl, body) => {
+  try {
+    const response = await axios.post(apiUrl, body);
+    const data = response.data;
+    return data;
+  } catch (error) {
+    throw new Error(`${error}`);
+  }
+}
 
 const getVehicleByVin = async (req, res) => {
   // 5UXKR0C52G0P21189
   try {
     const vinNumber = req.params.vin;
-    const apiUrl = "https://copart-iaai-api.com/api/v1/get-car-vin";
-    const carsResponse = await axios.post(apiUrl, {
-      api_token: apiToken,
+    const apiUrl = `${API_BASE_URL}/v1/get-car-vin`;
+    const body = {
+      api_token: API_TOKEN,
       vin_number: vinNumber,
-    });
-
-    const cars = carsResponse.data;
-    res.status(200).json(cars);
+    };
+    const car = await fetchData(apiUrl, body);
+    if (car.result.length === 0) {
+      return res.status(404).json({ error: "Vehicle not found" });
+    }
+    res.status(200).json(car);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    handleRequestError(error, res);
   }
 };
 
 const getVehiclesByFilters = async (req, res) => {
-  const filters = { page: 1, per_page: 20 };
+  const filters = { page: 1, per_page: 50 };
 
   try {
     for (const key in req.query) {
@@ -39,13 +56,15 @@ const getVehiclesByFilters = async (req, res) => {
       }
     }
 
-    const apiUrl = `https://copart-iaai-api.com/api/v2/get-active-lots`;
-    const response = await axios.post(apiUrl, {
-      api_token: apiToken,
+    const apiUrl = `${API_BASE_URL}/v2/get-active-lots`;
+    const body = {
+      api_token: API_TOKEN,
       ...filters,
-    });
-
-    const data = response.data;
+    };
+    const data = await fetchData(apiUrl, body);
+    if (data.result.length === 0) {
+      return res.status(404).json({ error: "Vehicles not found" });
+    }
     res.status(200).json(data);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -55,11 +74,14 @@ const getVehiclesByFilters = async (req, res) => {
 
 const getMakes = async (req, res) => {
   try {
-    const apiUrl = "https://copart-iaai-api.com/api/v1/get-makes";
-    const response = await axios.post(apiUrl, {
-      api_token: apiToken,
-    });
-    const data = response.data;
+    const apiUrl = `${API_BASE_URL}/v1/get-makes`;
+    const body = {
+      api_token: API_TOKEN,
+    };
+    const data = await fetchData(apiUrl, body);
+    if (data.result.length === 0) {
+      return res.status(404).json({ error: "Makes not found" });
+    }
     res.status(200).json(data);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -70,11 +92,14 @@ const getMakes = async (req, res) => {
 const getModelByMake = async (req, res) => {
   const { id } = req.params;
   try {
-    const apiUrl = `https://copart-iaai-api.com/api/v1/get-model-by-make/${id}`;
-    const response = await axios.post(apiUrl, {
-      api_token: apiToken,
-    });
-    const data = response.data;
+    const apiUrl = `${API_BASE_URL}/v1/get-model-by-make/${id}`;
+    const body = {
+      api_token: API_TOKEN,
+    };
+    const data = await fetchData(apiUrl, body);
+    if (data.result.length === 0) {
+      return res.status(404).json({ error: "Models not found" });
+    }
     res.status(200).json(data);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -84,11 +109,14 @@ const getModelByMake = async (req, res) => {
 
 const getVehiclesType = async (req, res) => {
   try {
-    const apiUrl = "https://copart-iaai-api.com/api/v1/get-vehicles-type";
-    const response = await axios.post(apiUrl, {
-      api_token: apiToken,
-    });
-    const data = response.data;
+    const apiUrl = `${API_BASE_URL}/v1/get-vehicles-type`;
+    const body = {
+      api_token: API_TOKEN,
+    };
+    const data = await fetchData(apiUrl, body);
+    if (data.result.length === 0) {
+      return res.status(404).json({ error: "Vehicle types not found" });
+    }
     res.status(200).json(data);
   } catch (error) {
     console.error("Error fetching data:", error);

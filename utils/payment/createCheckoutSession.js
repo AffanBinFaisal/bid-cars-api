@@ -1,10 +1,13 @@
 require("dotenv").config();
 
+// Extracting necessary environment variables
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const serverUrl = process.env.SERVER_URL;
 
+// Importing the Stripe SDK and initializing it with the secret key
 const stripe = require("stripe")(stripeSecretKey);
 
+// Function to create a Stripe Checkout session for payment
 const createCheckoutSession = async (amount, description, email) => {
   try {
     const session = await stripe.checkout.sessions.create({
@@ -22,7 +25,7 @@ const createCheckoutSession = async (amount, description, email) => {
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:3000/${email}/transaction/successful`,
+      success_url: `http://localhost:3000/success/${email}`,
       cancel_url: `${serverUrl}/cancel`,
     });
 

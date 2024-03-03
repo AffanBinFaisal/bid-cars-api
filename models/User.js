@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
   verificationToken: {
     type: String,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const User = mongoose.model('User', userSchema);

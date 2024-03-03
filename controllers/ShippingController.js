@@ -1,5 +1,6 @@
 const { Shipping } = require("../models/Shipping");
 
+// Get a specific shipping by its ID
 const getShippingById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -8,6 +9,7 @@ const getShippingById = async (req, res) => {
       _id: id,
       email: email,
     });
+
     if (shipping) {
       res.status(200).json({ shipping });
     } else {
@@ -19,7 +21,7 @@ const getShippingById = async (req, res) => {
   }
 };
 
-
+// Get all active shippings for the authenticated user
 const getActiveShippings = async (req, res) => {
   try {
     const { email } = req.user;
@@ -36,7 +38,7 @@ const getActiveShippings = async (req, res) => {
   }
 };
 
-
+// Get the completed shipping for the authenticated user
 const getCompletedShippings = async (req, res) => {
   try {
     const { email } = req.user;
@@ -48,12 +50,12 @@ const getCompletedShippings = async (req, res) => {
       res.status(404).json({ error: "Completed shipping not found" });
     }
   } catch (error) {
-    console.error("Error fetching shippings:", error);
+    console.error("Error fetching completed shipping:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-
+// Create a new shipping record for the authenticated user
 const createShipping = async (req, res) => {
   const { email } = req.user;
   const { vehicle, status } = req.body;
@@ -69,16 +71,16 @@ const createShipping = async (req, res) => {
       status: status,
       active: true,
     });
+
     await shipping.save();
     res.status(200).end();
-
   } catch (error) {
     console.error("Error creating shipping:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
-
+// Update an existing shipping record by its ID
 const updateShipping = async (req, res) => {
   const { id } = req.params;
 
@@ -108,8 +110,7 @@ const updateShipping = async (req, res) => {
   }
 };
 
-
-
+// Delete a shipping record by its ID
 const deleteShipping = async (req, res) => {
   const id = req.params.id;
 
@@ -127,8 +128,7 @@ const deleteShipping = async (req, res) => {
   }
 };
 
-
-
+// Get all shippings based on optional filters
 const getAllShippings = async (req, res) => {
   const filters = req.query;
   try {
@@ -145,6 +145,7 @@ const getAllShippings = async (req, res) => {
   }
 };
 
+// Get all shippings for the authenticated user
 const getAllUserShippings = async (req, res) => {
   const { email } = req.user;
   try {
@@ -156,7 +157,7 @@ const getAllUserShippings = async (req, res) => {
 
     res.status(200).json({ shippings });
   } catch (error) {
-    console.error("Error fetching shippings:", error);
+    console.error("Error fetching user shippings:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -170,4 +171,4 @@ module.exports = {
   updateShipping,
   deleteShipping,
   getAllShippings,
-}
+};

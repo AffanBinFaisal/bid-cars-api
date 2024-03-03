@@ -17,6 +17,10 @@ const sessionSchema = new mongoose.Schema({
   paid: {
     type: Boolean,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Session = mongoose.model('Session', sessionSchema);

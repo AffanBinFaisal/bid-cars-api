@@ -1,12 +1,13 @@
-const nodemailer = require("nodemailer");
+// Importing the email transporter for sending emails
 const transporter = require("../transporter/transporter");
 
+// Function to send a payment reminder email
 const sendPaymentReminderMail = (email, vehicle, daysLeft) => {
-
+  // Configuring the email options with HTML content
   const mailOptions = {
-    from: process.env.USER,
-    to: email,
-    subject: 'New Bid Notification from Bid-Cars',
+    from: process.env.USER, // Sender email
+    to: email, // Recipient email
+    subject: 'Payment Reminder from Bid-Cars', // Email subject
     html: `
     <html>
       <body style="font-family: Arial, sans-serif; margin: 20px; color: #333;">
@@ -27,7 +28,9 @@ const sendPaymentReminderMail = (email, vehicle, daysLeft) => {
     `,
   };
 
+  // Sending the email using the configured transporter
   transporter.sendMail(mailOptions, (error, info) => {
+    // Logging any errors or the success response
     if (error) {
       console.error('Error sending email:', error);
     } else {
@@ -36,4 +39,5 @@ const sendPaymentReminderMail = (email, vehicle, daysLeft) => {
   });
 }
 
+// Exporting the function for use in other parts of the application
 module.exports = sendPaymentReminderMail;
