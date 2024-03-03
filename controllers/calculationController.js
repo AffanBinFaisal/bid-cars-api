@@ -33,17 +33,22 @@ const oldCalculate = async (req, res) => {
     }
 
     // Call the oldCalculator function to perform the calculation
-    const calculation = await oldCalculator(type, price, destination, terminal, auctionName);
+    const calculation = await oldCalculator(
+      type,
+      price,
+      destination,
+      terminal,
+      auctionName
+    );
 
     // Respond with the calculated result
     res.status(200).json(calculation);
-
   } catch (error) {
     // Handle errors during calculation
     console.error(error);
     res.status(500).json({ error: `Internal Server Error: ${error.message}` });
   }
-}
+};
 
 // Function to calculate transport fee using the new method
 const newCalculate = async (req, res) => {
@@ -60,16 +65,15 @@ const newCalculate = async (req, res) => {
 
     // Respond with the calculated result
     res.status(200).json(calculation);
-
   } catch (error) {
     // Handle errors during calculation
     console.error(error);
     res.status(500).json({ error: `Internal Server Error: ${error.message}` });
   }
-}
+};
 
 module.exports = {
   getDestinations,
   oldCalculate,
   newCalculate,
-}
+};

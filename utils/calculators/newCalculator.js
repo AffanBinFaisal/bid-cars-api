@@ -9,7 +9,6 @@ const axios = require("axios");
 const apiToken = process.env.API_TOKEN;
 
 const newCalculator = async (price, vin, destination) => {
-
   const apiUrl = "https://copart-iaai-api.com/api/v1/get-car-vin";
   const carResponse = await axios.post(apiUrl, {
     api_token: apiToken,
@@ -36,28 +35,20 @@ const newCalculator = async (price, vin, destination) => {
       auctionFee = (price * 6) / 100;
     } else {
       const iaaiAuctionFee = await IaaiAuctionFee.findOne({
-        $and: [
-          { minPrice: { $lte: price } },
-          { maxPrice: { $gte: price } }
-        ]
+        $and: [{ minPrice: { $lte: price } }, { maxPrice: { $gte: price } }],
       });
       auctionFee = iaaiAuctionFee.price;
     }
-
   } else if (type == "copart") {
     if (price >= 15000) {
       auctionFee = (price * 6) / 100;
     } else {
       const copartAuctionFee = await CopartAuctionFee.findOne({
-        $and: [
-          { minPrice: { $lte: price } },
-          { maxPrice: { $gte: price } }
-        ]
+        $and: [{ minPrice: { $lte: price } }, { maxPrice: { $gte: price } }],
       });
       auctionFee = copartAuctionFee.price;
     }
   }
-
 
   const fields = auctionName.split(" - ");
   const field2 = fields[0];
@@ -73,7 +64,7 @@ const newCalculator = async (price, vin, destination) => {
   const destinations = ["savannah", "nj", "houston", "miami", "chicago"];
   for (const destination of destinations) {
     if (transport[destination] === null) {
-      transport[destination] = 0;
+      transportFee = 0;
     }
     if (minValue > transport[destination]) {
       minValue = transport[destination];
@@ -81,11 +72,10 @@ const newCalculator = async (price, vin, destination) => {
     }
   }
 
-
   const terminal = minKey;
+  transportFee = minValue;
 
   if (destination == "klaipeda") {
-
     if (terminal == "savannah") {
       destinationFee = 725;
     } else if (terminal == "nj") {
@@ -112,24 +102,22 @@ const newCalculator = async (price, vin, destination) => {
   }
 
   if (transport[terminal]) {
-    if (typeof (transport[terminal]) == "String") {
+    if (typeof transport[terminal] == "String") {
       transportFee = transport[terminal].replace(/\s/g, "");
       transportFee = transport[terminal].replace(",", "");
     }
-
   } else {
-    transportFee = 0
+    transportFee = 0;
   }
 
   if (type == "iaai") {
-
     if (price >= 8000) {
       internetBidFee = 129;
       proxyBidFee = 149;
     } else {
       const bidFee = await BidFee.findOne({
         maxPrice: { $gt: auctionFee },
-        minPrice: { $lt: auctionFee }
+        minPrice: { $lt: auctionFee },
       });
       internetBidFee = bidFee.internetBidFee;
       proxyBidFee = bidFee.proxyBidFee;
@@ -139,18 +127,21 @@ const newCalculator = async (price, vin, destination) => {
     environmentalFee = 10;
     premiumVehicleReport = 15;
 
-    total = parseInt(price) + serviceFee + environmentalFee + premiumVehicleReport + transportFee + internetBidFee + proxyBidFee + destinationFee;
-
+    total =
+      parseInt(price) +
+      serviceFee +
+      environmentalFee +
+      premiumVehicleReport +
+      transportFee +
+      internetBidFee +
+      proxyBidFee +
+      destinationFee;
   } else if (type == "copart") {
-
     if (price >= 8000) {
       liveBidFee = 149;
     } else {
       const bidFee = await BidFee.findOne({
-        $and: [
-          { minPrice: { $lte: price } },
-          { maxPrice: { $gte: price } }
-        ]
+        $and: [{ minPrice: { $lte: price } }, { maxPrice: { $gte: price } }],
       });
 
       if (bidFee.liveBidFee == "FREE") {
@@ -161,10 +152,28 @@ const newCalculator = async (price, vin, destination) => {
     }
     serviceFee = 250;
     gateFee = 79;
-    total = parseInt(price) + gateFee + environmentalFee + serviceFee + transportFee + liveBidFee + destinationFee;
+    total =
+      parseInt(price) +
+      gateFee +
+      environmentalFee +
+      serviceFee +
+      transportFee +
+      liveBidFee +
+      destinationFee;
   }
-  
-  return ({ price, gateFee, environmentalFee, serviceFee, transportFee, liveBidFee, destinationFee, transportFee, internetBidFee, proxyBidFee, liveBidFee, total });
-}
+
+  return {
+    price,
+    gateFee,
+    environmentalFee,
+    serviceFee,
+    liveBidFee,
+    destinationFee,
+    transportFee,
+    internetBidFee,
+    proxyBidFee,
+    total,
+  };
+};
 
 module.exports = newCalculator;

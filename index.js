@@ -2,9 +2,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const cron = require('node-cron');
+const cron = require("node-cron");
 const path = require("path");
-require('dotenv').config();
+require("dotenv").config();
 
 // Importing a utility function for payment reminders
 const runPaymentReminder = require("./utils/reminder/runPaymentReminder");
@@ -30,10 +30,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Serving static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Serving images from the 'uploads' directory under '/images' route
-app.use("/images", express.static(path.join(__dirname, 'uploads')));
+app.use("/images", express.static(path.join(__dirname, "uploads")));
 
 // Configuring routes for different features
 app.use("/auth", authRouter);
@@ -47,7 +47,7 @@ app.use("/images", imageRouter);
 app.use("/calculations", calculcationsRouter);
 
 // Scheduling a cron job for payment reminders
-const job = cron.schedule('0 0 * * 1-5', runPaymentReminder);
+const job = cron.schedule("0 0 * * 1-5", runPaymentReminder);
 
 // Starting the server
 app.listen(port, () => {
