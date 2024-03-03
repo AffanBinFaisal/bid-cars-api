@@ -10,9 +10,11 @@ router.get("/all", adminOnly, shippingController.getAllUserShippings);
 
 router.get("/active", authenticateToken, shippingController.getActiveShippings);
 
-router.get("/completed", authenticateToken, shippingController.getCompletedShippings);
-
-
+router.get(
+  "/completed",
+  authenticateToken,
+  shippingController.getCompletedShippings
+);
 
 // Admin
 
@@ -20,8 +22,12 @@ router.get("/admin/all", adminOnly, shippingController.getAllShippings);
 
 router.post("/admin/create", adminOnly, shippingController.createShipping);
 
-router.post("admin/update/:id", adminOnly, shippingController.updateShipping);
+router.post("/admin/update/:id", adminOnly, shippingController.updateShipping);
 
-router.delete("admin/delete/:id", adminOnly, shippingController.deleteShipping);
+router.delete(
+  "/admin/delete/:id",
+  adminOnly,
+  shippingController.deleteShipping
+);
 
 module.exports = router;
